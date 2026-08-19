@@ -1,0 +1,177 @@
+tListener('click', skipToEnd);
+    scene.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); skipToEnd(); }
+    });
+  }
+
+  function renderApp() {
+    state = loadState();
+    var root = document.getElementById('root');
+    root.innerHTML = document.getElementById('shell-template').innerHTML;
+
+    var counterEl = document.getElementById('confirmed-counter');
+    var total = confirmedCount(state);
+    if (total > 0) {
+      counterEl.hidden = false;
+      counterEl.textContent = '\u{1F90D} ' + total + ' personne' + (total > 1 ? 's ont' : ' a') + ' déjà confirmé sa présence';
+    }
+
+    var slot = document.getElementById('rsvp-form-slot');
+    var mine = null;
+    try { mine = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) {}
+    if (mine && state.responses.some(function (r) { return r.id === mine.id; })) {
+      renderConfirmation(slot, mine);
+    } else {
+      renderForm(slot, null);
+    }
+
+    var adminToggle = document.getElementById('admin-toggle');
+    var adminPanel = document.getElementById('admin-panel');
+    adminToggle.addEventListener('click', function () {
+      if (adminPanel.hidden) renderAdmin(adminPanel);
+      else { adminPanel.hidden = true; adminPanel.innerHTML = ''; }
+    });
+    if (sessionStorage.getItem('aa-admin-unlocked') === '1') renderAdmin(adminPanel);
+    if (introDismissed) {
+      updateTimelineFocus();
+      initRevealObservers();
+    }
+  }
+
+  function updateTimelineFocus() {
+    var map = document.getElementById('travel-map');
+    var svg = document.getElementById('travel-path-svg');
+    var path = document.getElementById('travel-path-progress');
+    var dot = document.getElementById('travel-dot');
+    var steps = document.querySelectorAll('.travel-step');
+    if (!map || !svg || !path || !dot || !steps.length) return;
+
+    var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+
+    var viewportH = window.innerHeight || document.documentElement.clientHeight;
+    var focusY = viewportH * 0.50;
+    var mapRect = map.getBoundingClientRect();
+
+    // Progress through the map based on the user's natural page scroll.
+    var visibleStart = viewportH * 0.88;
+    var visibleEnd = viewportH * 0.18;
+    var raw = (visibleStart - mapRect.top) / (mapRect.height + visibleStart - visibleEnd);
+    var progress = Math.max(0, Math.min(1, raw));
+
+    var totalLength = path.getTotalLength();
+    path.style.strokeDasharray = totalLength;
+    path.style.strokeDashoffset = totalLength * (1 - progress);
+
+    // Move the traveler along the actual curved SVG path.
+    var pt = path.getPointAtLength(totalLength * progress);
+    var svgRect = svg.getBoundingClientRect();
+    var xScale = svgRect.width / 100;
+    var yScale = svgRect.height / 620;
+
+    dot.style.left = (svgRect.left - mapRect.left + pt.x * xScale) + 'px';
+    dot.style.top = (pt.y * yScale) + 'px';
+
+    // Fixed waypoint dots: one for each real step on the route.
+    var waypointWrap = document.getElementById('travel-waypoints');
+    if (waypointWrap && waypointWrap.children.length !== steps.length) {
+      waypointWrap.innerHTML = '';
+      for (var wi = 0; wi < steps.length; wi++) {
+        var wp = document.createElement('span');
+        wp.className = 'travel-waypoint';
+        wp.setAttribute('data-waypoint', wi);
+        waypointWrap.appendChild(wp);
+      }
+    }
+
+    var waypointEls = waypointWrap ? waypointWrap.querySelectorAll('.travel-waypoint') : [];
+    var stepFractions = [0, 0.25, 0.50, 0.75, 1];
+
+    for (var w = 0; w < waypointEls.length; w++) {
+      var wpt = path.getPointAtLength(totalLength * stepFractions[w]);
+      waypointEls[w].style.left = (svgRect.left - mapRect.left + wpt.x * xScale) + 'px';
+      waypointEls[w].style.top = (wpt.y * yScale) + 'px';
+    }
+
+    // Only the text size changes: active step is gently larger,
+    // passed/future steps gently smaller. No layout/position change.
+    var activeIndex = Math.max(0, Math.min(steps.length - 1, Math.round(progress * (steps.length - 1))));
+
+    steps.forEach(function (step, index) {
+      var distance = Math.abs(index - progress * (steps.length - 1));
+      var influence = Math.max(0, 1 - distance);
+      var scale = 0.93 + influence * 0.22; // 93% inactive -> 115% active
+
+      step.style.transform = 'scale(' + scale.toFixed(3) + ')';
+      step.style.opacity = (0.66 + influence * 0.34).toFixed(3);
+
+      var title = step.querySelector('.ttl');
+      if (title) {
+        var titleScale = 1 + influence * 0.10; // extra emphasis: title reaches ~126% visually
+        title.style.transform = 'scale(' + titleScale.toFixed(3) + ')';
+        title.style.transformOrigin = 'left center';
+      }
+      step.classList.toggle('is-focused', index === activeIndex);
+    });
+
+    for (var j = 0; j < waypointEls.length; j++) {
+      waypointEls[j].classList.toggle('is-passed', j < activeIndex);
+      waypointEls[j].classList.toggle('is-current', j === activeIndex);
+    }
+  }
+
+  var revealObserver = null;
+  function initRevealObservers() {
+    if (revealObserver) revealObserver.disconnect();
+    var targets = document.querySelectorAll('[data-reveal]');
+    if (!targets.length) return;
+    if (!('IntersectionObserver' in window)) {
+      targets.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+    revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2, rootMargin: '0px 0px -8% 0px' });
+    targets.forEach(function (el) { revealObserver.observe(el); });
+  }
+
+  var timelineTicking = false;
+  function scheduleTimelineUpdate() {
+    if (timelineTicking) return;
+    timelineTicking = true;
+    requestAnimationFrame(function () {
+      updateTimelineFocus();
+      timelineTicking = false;
+    });
+  }
+
+  function resolvePending() {
+    var pendingRaw = null;
+    try { pendingRaw = sessionStorage.getItem(PENDING_KEY); } catch (e) {}
+    if (!pendingRaw) return;
+    var pending;
+    try { pending = JSON.parse(pendingRaw); } catch (e) { return; }
+    var already = state.responses.some(function (r) { return r.id === pending.id; });
+    if (already) {
+      try { sessionStorage.removeItem(PENDING_KEY); } catch (e) {}
+      return;
+    }
+    submitEntry(pending, function (ok) {
+      if (ok) renderApp();
+    });
+  }
+
+  initIntro();
+  renderApp();
+  resolvePending();
+  window.addEventListener('scroll', scheduleTimelineUpdate, { passive: true });
+  window.addEventListener('resize', scheduleTimelineUpdate);
+})();
+</script>
+</body>
+</html>
