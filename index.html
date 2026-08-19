@@ -21,6 +21,7 @@
         })));
         let html = parts.join('');
         html = html.replace('</head>', '<link rel="stylesheet" href="door3d.css?v=2"></head>');
+        html = html.replace('</body>', '<script src="supabase-rsvp.js?v=1"><\/script></body>');
         document.open();
         document.write(html);
         document.close();
