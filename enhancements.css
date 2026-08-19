@@ -1,0 +1,70 @@
+/* Ajustements visuels demandés — sans refonte du site */
+:root{--aa-ink:#171412;--aa-gold:#b48a52;--aa-cream:#fbf7ef;--aa-line:#ded4c5}
+
+/* Retire la grande bande noire tout en conservant le hero */
+.hero{
+  background:linear-gradient(180deg,#fffdf8 0%,#f7f0e5 100%)!important;
+  color:var(--aa-ink)!important;
+  border-bottom:1px solid #e8ded0;
+  padding-top:4rem!important;
+  padding-bottom:3.6rem!important;
+}
+.hero .eyebrow{color:#6f665b!important;letter-spacing:.12em!important;text-transform:none!important;font-size:.94rem!important;line-height:1.45;max-width:520px;margin-left:auto;margin-right:auto}
+.hero .eyebrow strong{display:block;margin-top:.5rem;font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.55rem,5vw,2.15rem);font-weight:500;font-style:italic;letter-spacing:.02em;color:var(--aa-gold)}
+.hero .names{color:var(--aa-ink)}
+.hero .date{color:#766b60!important}
+
+/* Compte à rebours */
+.aa-countdown{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:430px;margin:1.5rem auto 0}
+.aa-countdown-box{border:1px solid #dfd3c3;background:rgba(255,255,255,.74);padding:.7rem .3rem .55rem;text-align:center}
+.aa-countdown-box strong{display:block;font-family:'Playfair Display',Georgia,serif;font-size:1.45rem;font-weight:400;color:#9c713d;line-height:1.1}
+.aa-countdown-box span{display:block;margin-top:.25rem;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:#776f66}
+.aa-countdown-caption{text-align:center;font-size:.82rem;color:#776f66;margin:.55rem 0 0}
+
+/* Icônes élégantes dans la journée */
+.travel-step .aa-event-icon{width:34px;height:34px;display:block;margin:0 0 .45rem;color:var(--aa-gold)}
+.travel-step .aa-event-icon svg{width:100%;height:100%;display:block;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.travel-step .loc-link{margin-top:.35rem;padding:.28rem .62rem;border:1px solid #d7c6ad;border-radius:999px;text-decoration:none!important;background:#fffdf9;color:#6f5a40!important;font-style:normal!important;font-size:.78rem!important}
+.travel-step .loc-link:hover{background:#f5ede1}
+
+/* Bloc photo mairie */
+.aa-mairie{padding-top:2.2rem!important;padding-bottom:2.7rem!important;border-top:1px solid #e6ddd1;text-align:center;background:linear-gradient(180deg,#fff,#fbf7ef)}
+.aa-mairie h2{font-size:1.55rem;margin-bottom:.35rem}
+.aa-mairie p{color:#6f675f;max-width:500px;margin:.7rem auto 1.1rem}
+.aa-mairie-photo{width:100%;max-width:560px;aspect-ratio:16/10;object-fit:cover;border:1px solid #ddcfbd;box-shadow:0 12px 30px rgba(79,59,35,.10)}
+.aa-map-button{display:inline-block;margin-top:1rem;padding:.5rem .9rem;border:1px solid #d2bc9d;border-radius:999px;color:#6c5537;text-decoration:none;background:#fff;font-size:.86rem}
+
+/* Dress code : pictos + blanc/noir */
+.dresscode .dresscode-palette,.dresscode .dresscode-note{display:none!important}
+.aa-dress-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:1.35rem 0 .8rem}
+.aa-dress-card{border:1px solid #e0d6ca;background:#fffdf9;padding:1rem;text-align:center}
+.aa-dress-icon{width:46px;height:58px;margin:0 auto .45rem;color:#9f7948}
+.aa-dress-icon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.aa-dress-card strong{display:block;font-family:'Playfair Display',Georgia,serif;font-weight:500;margin-bottom:.55rem}
+.aa-colors{display:flex;justify-content:center;gap:8px;align-items:center}
+.aa-color{width:24px;height:24px;border-radius:50%;border:1px solid #bfb4a7;display:inline-block}
+.aa-color-white{background:#fff}
+.aa-color-black{background:#111}
+.aa-color-offwhite{background:#f1eadc}
+.aa-dress-copy{text-align:center!important;color:#665f57!important;margin-top:.65rem!important}
+
+/* Intro transformée visuellement en deux portes de château */
+.intro-overlay{background:radial-gradient(circle at 50% 42%,#fff8df 0%,#eee1c9 40%,#cbb99b 100%)!important}
+.book{width:min(86vw,620px)!important;height:min(66vh,520px)!important;max-height:520px!important;filter:drop-shadow(0 28px 36px rgba(40,27,14,.28))!important}
+.book-page{background:linear-gradient(rgba(255,251,239,.88),rgba(255,248,232,.94)),radial-gradient(circle at 50% 68%,#fff9e8 0%,#ead8b7 72%)!important;border:1px solid rgba(144,111,68,.35)!important}
+.book-cover{background:linear-gradient(90deg,#4c4034 0%,#1b1714 42%,#0e0d0c 100%)!important;border-color:#735f47!important}
+.book-cover::before{content:"";position:absolute;inset:7% 9%;border:2px solid #b48a52;border-radius:48% 48% 4% 4%/20% 20% 4% 4%;background:repeating-linear-gradient(90deg,transparent 0 18px,rgba(190,149,88,.72) 18px 20px,transparent 20px 36px);box-shadow:inset 0 0 0 1px rgba(245,218,164,.18)}
+.book-cover::after{content:""!important;position:absolute!important;left:9%!important;right:9%!important;top:48%!important;height:2px!important;background:#b48a52!important;opacity:.8!important;box-shadow:0 -78px 0 rgba(180,138,82,.7),0 78px 0 rgba(180,138,82,.7)!important}
+.book-cover-left{border-radius:12px 0 0 12px!important}
+.book-cover-right{border-radius:0 12px 12px 0!important}
+.book-seal{background:#f8edd9!important;color:#6f5637!important;border:1px solid #b48a52!important}
+.book-page-eyebrow{max-width:320px;margin-left:auto!important;margin-right:auto!important;line-height:1.35!important}
+.book-page-names{font-size:1.7rem!important}
+
+@media(max-width:520px){
+  .aa-countdown{gap:5px}
+  .aa-countdown-box strong{font-size:1.18rem}
+  .aa-countdown-box span{font-size:.52rem;letter-spacing:.08em}
+  .aa-dress-grid{grid-template-columns:1fr}
+  .book{height:min(58vh,430px)!important}
+}
