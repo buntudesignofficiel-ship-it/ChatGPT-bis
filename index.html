@@ -23,7 +23,7 @@
         html = html.replace('</head>', '<link rel="stylesheet" href="door3d.css?v=2"></head>');
         const bodyEnd = html.lastIndexOf('</body>');
         if (bodyEnd !== -1) {
-          html = html.slice(0, bodyEnd) + '<script src="supabase-rsvp.js?v=3"><\/script>' + html.slice(bodyEnd);
+          html = html.slice(0, bodyEnd) + '<script src="supabase-rsvp.js?v=3"><\/script><script src="admin-delete.js?v=1"><\/script>' + html.slice(bodyEnd);
         }
         document.open();
         document.write(html);
