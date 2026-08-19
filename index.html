@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Axelle & Antonio — 26.09.2026</title>
+  <title>Antonio & Axelle — 26.09.2026</title>
   <style>
     html,body{margin:0;min-height:100%;background:#fff;color:#171412;font-family:Georgia,serif}
     .loading{min-height:100vh;display:grid;place-items:center;font-style:italic;color:#7a746a}
@@ -20,10 +20,10 @@
           return r.text();
         })));
         let html = parts.join('');
-        html = html.replace('</head>', '<link rel="stylesheet" href="door3d.css?v=2"></head>');
+        html = html.replace('</head>', '<link rel="stylesheet" href="door3d.css?v=2"><link rel="stylesheet" href="enhancements.css?v=1"></head>');
         const bodyEnd = html.lastIndexOf('</body>');
         if (bodyEnd !== -1) {
-          html = html.slice(0, bodyEnd) + '<script src="supabase-rsvp.js?v=3"><\/script><script src="admin-delete.js?v=1"><\/script>' + html.slice(bodyEnd);
+          html = html.slice(0, bodyEnd) + '<script src="supabase-rsvp.js?v=3"><\/script><script src="admin-delete.js?v=1"><\/script><script src="enhancements.js?v=1"><\/script>' + html.slice(bodyEnd);
         }
         document.open();
         document.write(html);
