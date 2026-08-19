@@ -1,0 +1,182 @@
+ réessayer.');
+      });
+    }).catch(function () {
+      fail('Une erreur est survenue, merci de réessayer.');
+    });
+  }
+
+  function renderAdmin(panel) {
+    var unlocked = sessionStorage.getItem('aa-admin-unlocked') === '1';
+    panel.innerHTML = '';
+    panel.hidden = false;
+
+    if (!unlocked) {
+      var gate = document.createElement('div');
+      gate.className = 'admin-gate';
+      var pass = document.createElement('input');
+      pass.type = 'password';
+      pass.placeholder = 'Mot de passe';
+      var go = document.createElement('button');
+      go.type = 'button';
+      go.textContent = 'Voir les réponses';
+      var err = document.createElement('p');
+      err.className = 'error-msg';
+      err.hidden = true;
+      go.addEventListener('click', function () {
+        if (pass.value === ADMIN_PASS) {
+          sessionStorage.setItem('aa-admin-unlocked', '1');
+          renderAdmin(panel);
+        } else {
+          err.textContent = 'Mot de passe incorrect.';
+          err.hidden = false;
+        }
+      });
+      gate.appendChild(pass);
+      gate.appendChild(go);
+      gate.appendChild(err);
+      panel.appendChild(gate);
+      return;
+    }
+
+    var wrap = document.createElement('div');
+    wrap.className = 'admin-table';
+
+    var yes = state.responses.filter(function (r) { return r.attending; });
+    var no = state.responses.filter(function (r) { return !r.attending; });
+    var counts = {
+      adulte: { entree: {}, plat: {}, vegetarien: {}, dessert: {}, boisson: {} },
+      enfant: { plat: {}, vegetarien: {}, dessert: {}, boisson: {} }
+    };
+    Object.keys(counts).forEach(function (formula) {
+      Object.keys(counts[formula]).forEach(function (cat) {
+        MENU[formula][cat].forEach(function (item) { counts[formula][cat][item.id] = 0; });
+      });
+    });
+    var formulaCounts = { adulte: 0, enfant: 0 };
+    yes.forEach(function (r) {
+      (r.guests || []).forEach(function (g) {
+        var formula = g.formula === 'enfant' ? 'enfant' : 'adulte';
+        formulaCounts[formula]++;
+        if (formula === 'adulte' && g.entree && counts.adulte.entree[g.entree] !== undefined) counts.adulte.entree[g.entree]++;
+        var platCat = g.platType === 'vegetarien' ? 'vegetarien' : 'plat';
+        if (g.plat && counts[formula][platCat][g.plat] !== undefined) counts[formula][platCat][g.plat]++;
+        if (g.dessert && counts[formula].dessert[g.dessert] !== undefined) counts[formula].dessert[g.dessert]++;
+        if (g.boisson && counts[formula].boisson[g.boisson] !== undefined) counts[formula].boisson[g.boisson]++;
+      });
+    });
+
+    var summary = document.createElement('div');
+    summary.className = 'admin-summary';
+    var summarySpans = ['<span>' + confirmedCount(state) + ' présents</span>', '<span>' + no.length + ' absents</span>'];
+    if (formulaCounts.adulte) summarySpans.push('<span>' + formulaCounts.adulte + ' formule(s) complète(s)</span>');
+    if (formulaCounts.enfant) summarySpans.push('<span>' + formulaCounts.enfant + ' formule(s) enfant</span>');
+    ['adulte', 'enfant'].forEach(function (formula) {
+      Object.keys(counts[formula]).forEach(function (cat) {
+        MENU[formula][cat].forEach(function (item) {
+          var n = counts[formula][cat][item.id];
+          if (n > 0) summarySpans.push('<span>' + escapeHtml(item.label) + ' : ' + n + '</span>');
+        });
+      });
+    });
+    summary.innerHTML = summarySpans.join('');
+    wrap.appendChild(summary);
+
+    if (state.responses.length === 0) {
+      var empty = document.createElement('p');
+      empty.className = 'admin-empty';
+      empty.textContent = 'Aucune réponse pour le moment.';
+      wrap.appendChild(empty);
+    } else {
+      state.responses.slice().sort(function (a, b) { return new Date(b.submittedAt) - new Date(a.submittedAt); })
+        .forEach(function (r) {
+          var row = document.createElement('div');
+          row.className = 'admin-row';
+          var guestsTxt = r.attending
+            ? (r.guests || []).map(function (g) {
+                var summaryTxt = guestMenuSummary(g);
+                return escapeHtml(g.name) + (summaryTxt ? ' — ' + escapeHtml(summaryTxt) : ' — menu non renseigné (ancienne réponse)');
+              }).join('<br>')
+            : '';
+          row.innerHTML =
+            '<div class="r-name">' + escapeHtml(r.name) + (r.attending ? '' : ' <span class="r-no">(absent)</span>') + '</div>' +
+            (r.attending ? '<div class="r-guests">' + guestsTxt + '</div>' : '') +
+            (r.note ? '<div class="r-note">' + escapeHtml(r.note) + '</div>' : '');
+
+          var deleteBtn = document.createElement('button');
+          deleteBtn.type = 'button';
+          deleteBtn.className = 'delete-response';
+          deleteBtn.textContent = 'Supprimer cette réponse';
+          deleteBtn.addEventListener('click', function () {
+            deleteResponse(r.id, deleteBtn);
+          });
+          row.appendChild(deleteBtn);
+
+          wrap.appendChild(row);
+        });
+    }
+
+    var lockBtn = document.createElement('button');
+    lockBtn.type = 'button';
+    lockBtn.className = 'edit-link';
+    lockBtn.textContent = 'Masquer';
+    lockBtn.addEventListener('click', function () {
+      sessionStorage.removeItem('aa-admin-unlocked');
+      panel.hidden = true;
+      panel.innerHTML = '';
+    });
+    wrap.appendChild(lockBtn);
+    panel.appendChild(wrap);
+  }
+
+  function markIntroDismissed() {
+    if (introDismissed) return;
+    introDismissed = true;
+    updateTimelineFocus();
+    initRevealObservers();
+  }
+
+  function initIntro() {
+    var mount = document.getElementById('intro-mount');
+    if (!mount) { markIntroDismissed(); return; }
+    var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) { mount.innerHTML = ''; markIntroDismissed(); return; }
+
+    mount.innerHTML = document.getElementById('intro-template').innerHTML;
+    var overlay = document.getElementById('intro-overlay');
+    var book = document.getElementById('intro-book');
+    var scene = document.getElementById('intro-scene');
+    document.body.classList.add('intro-lock');
+
+    var opened = false;
+    var hideTimer = null;
+    var fadeTimer = null;
+
+    function hideOverlayAnimated() {
+      overlay.classList.add('is-fading');
+      fadeTimer = setTimeout(function () {
+        overlay.style.display = 'none';
+        document.body.classList.remove('intro-lock');
+        markIntroDismissed();
+      }, 650);
+    }
+
+    function openBook() {
+      if (opened) return;
+      opened = true;
+      book.classList.add('is-open');
+      hideTimer = setTimeout(hideOverlayAnimated, 1100);
+    }
+
+    var startTimer = setTimeout(openBook, 700);
+
+    function skipToEnd() {
+      clearTimeout(startTimer);
+      if (!opened) { openBook(); return; }
+      clearTimeout(hideTimer);
+      clearTimeout(fadeTimer);
+      overlay.style.display = 'none';
+      document.body.classList.remove('intro-lock');
+      markIntroDismissed();
+    }
+
+    scene.addEven
