@@ -1,0 +1,193 @@
+</p>
+    <p class="dresscode-note">Une petite exception&nbsp;: nous laissons le blanc éclatant à la mariée. 🤍</p>
+  </section>
+
+  <section class="rsvp">
+    <div data-reveal>
+      <h2>Serez-vous parmi nous&nbsp;?</h2>
+      <p class="deadline">Merci de nous confirmer votre présence au plus tard le <strong>31 août 2026</strong>.</p>
+    </div>
+    <p id="confirmed-counter" class="counter" hidden></p>
+    <div id="rsvp-form-slot"></div>
+  </section>
+
+  <footer class="signoff" data-reveal>
+    <p>Axelle &amp; Antonio</p>
+    <button id="admin-toggle" class="admin-link" type="button">Espace mariés</button>
+    <div id="admin-panel" hidden></div>
+  </footer>
+</template>
+
+<template id="intro-template">
+  <div class="intro-overlay" id="intro-overlay">
+    <div class="intro-scene" id="intro-scene" role="button" tabindex="0" aria-label="Passer l'ouverture">
+      <div class="book" id="intro-book">
+        <div class="book-page">
+          <p class="book-page-eyebrow">Une belle nouvelle</p>
+          <p class="book-page-names">Axelle &amp; Antonio</p>
+          <p class="book-page-date">26 &middot; 09 &middot; 2026</p>
+        </div>
+        <div class="book-spine"></div>
+        <div class="book-cover book-cover-left"></div>
+        <div class="book-cover book-cover-right"></div>
+        <span class="book-seal">A&amp;A</span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<div id="intro-mount"></div>
+
+<div id="root"></div>
+
+<script type="application/json" id="state-data">{"responses":[{"id":"0eef0dd2-5fe9-4199-8a9e-79383ccafcbf","name":"Edf","attending":true,"guests":[{"name":"D","menu":"jardin"}],"note":"Dix","submittedAt":"2026-08-19T04:04:49.467Z"}]}</script>
+
+<script id="app-script">
+(function () {
+  var APP_SRC = document.currentScript.textContent;
+
+  var MENU = {
+    adulte: {
+      entree: [
+        { id: 'feta-falafel', label: 'Crème fêta et falafel' },
+        { id: 'oeuf-maroilles', label: 'Œuf cocotte maroilles' },
+        { id: 'saumon-fume', label: 'Tartine saumon fumé' }
+      ],
+      plat: [
+        { id: 'carbonnade', label: 'Carbonnade' },
+        { id: 'burger-paloma', label: 'Burger paloma' },
+        { id: 'wrap-poulet', label: 'Wrap poulet' }
+      ],
+      vegetarien: [
+        { id: 'burger-veggie', label: 'Burger veggie' },
+        { id: 'tartare-thon', label: 'Tartare thon' },
+        { id: 'salade-thai', label: 'Salade thaï' }
+      ],
+      dessert: [
+        { id: 'cookie-choc-pistache', label: 'Cookie chocolat pistache' },
+        { id: 'profiteroles', label: 'Profiteroles' },
+        { id: 'pavlova', label: 'Pavlova fruits rouges' }
+      ],
+      boisson: [
+        { id: 'soft', label: 'Soft classique' },
+        { id: 'maison', label: 'Citronnade ou thé glacé maison' },
+        { id: 'mocktail', label: 'Mocktail' }
+      ]
+    },
+    enfant: {
+      plat: [
+        { id: 'nuggets', label: 'Nuggets et frites' },
+        { id: 'steak-frites', label: 'Steak haché et frites' }
+      ],
+      vegetarien: [
+        { id: 'linguine', label: 'Linguine à la tomate, boulette blé et pois' }
+      ],
+      dessert: [
+        { id: 'glace', label: '2 boules de glace' }
+      ],
+      boisson: [
+        { id: 'soft', label: 'Soft classique' },
+        { id: 'maison', label: 'Citronnade ou thé glacé maison' }
+      ]
+    }
+  };
+  var FORMULA_LABEL = { adulte: 'Formule complète', enfant: 'Formule enfant' };
+  var PLAT_TYPE_LABEL = { plat: 'Plat', vegetarien: 'Proposition végétarienne' };
+
+  var ADMIN_PASS = 'AxelleEtAntonio2026';
+  var STORAGE_KEY = 'aa-wedding-2026-my-rsvp';
+  var PENDING_KEY = 'aa-wedding-2026-pending';
+
+  function loadState() {
+    try {
+      var raw = document.getElementById('state-data').textContent;
+      var s = JSON.parse(raw);
+      if (!s || !Array.isArray(s.responses)) s = { responses: [] };
+      return s;
+    } catch (e) {
+      return { responses: [] };
+    }
+  }
+
+  function escapeHtml(str) {
+    return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function uid() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'id-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+  }
+
+  function itemLabel(formula, category, id) {
+    var list = (MENU[formula] && MENU[formula][category]) || [];
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i].label;
+    return '—';
+  }
+
+  function validOrDefault(list, id) {
+    return list.some(function (m) { return m.id === id; }) ? id : list[0].id;
+  }
+
+  function guestMenuSummary(g) {
+    if (!g.formula || !g.plat) return '';
+    var formula = g.formula === 'enfant' ? 'enfant' : 'adulte';
+    var platType = g.platType === 'vegetarien' ? 'vegetarien' : 'plat';
+    var parts = [FORMULA_LABEL[formula]];
+    if (formula === 'adulte') parts.push('Entrée : ' + itemLabel(formula, 'entree', g.entree));
+    parts.push(PLAT_TYPE_LABEL[platType] + ' : ' + itemLabel(formula, platType, g.plat));
+    parts.push('Dessert : ' + itemLabel(formula, 'dessert', g.dessert));
+    parts.push('Boisson : ' + itemLabel(formula, 'boisson', g.boisson));
+    return parts.join(' — ');
+  }
+
+  function confirmedCount(state) {
+    var total = 0;
+    state.responses.forEach(function (r) {
+      if (r.attending) total += (r.guests || []).length;
+    });
+    return total;
+  }
+
+  var state = loadState();
+  var introDismissed = false;
+  var guestRowCount = 1;
+
+  function buildFullDocument(newState) {
+    var headHtml =
+      '<meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+      '<title>Axelle &amp; Antonio — 26.09.2026</title>' +
+      '<link rel="preconnect" href="https://fonts.googleapis.com">' +
+      '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' +
+      document.getElementById('font-link').outerHTML +
+      document.getElementById('page-style').outerHTML;
+
+    var shellHtml = document.getElementById('shell-template').outerHTML;
+    var introHtml = document.getElementById('intro-template').outerHTML;
+    var jsonState = JSON.stringify(newState).replace(/</g, '\\u003c');
+
+    return '<!doctype html><html lang="fr"><head>' + headHtml + '</head><body>' +
+      introHtml +
+      '<div id="intro-mount"></div>' +
+      shellHtml +
+      '<div id="root"></div>' +
+      '<script type="application/json" id="state-data">' + jsonState + '<\/script>' +
+      '<script id="app-script">' + APP_SRC + '<\/script>' +
+      '</body></html>';
+  }
+
+  function buildMenuField(labelText, selectRole) {
+    var field = document.createElement('div');
+    field.className = 'guest-menu-field';
+    var label = document.createElement('label');
+    label.textContent = labelText;
+    var select = document.createElement('select');
+    select.setAttribute('data-role', selectRole);
+    field.appendChild(label);
+    field.appendChild(select);
+    return { field: field, select: select };
+  }
+
+  functio
