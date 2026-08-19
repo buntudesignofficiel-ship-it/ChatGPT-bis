@@ -1,0 +1,173 @@
+tion () { attending = true; syncAttendingUI(); });
+    noBtn.addEventListener('click', function () { attending = false; syncAttendingUI(); });
+    syncAttendingUI();
+
+    var errorMsg = document.createElement('p');
+    errorMsg.className = 'error-msg';
+    errorMsg.hidden = true;
+
+    var submitBtn = document.createElement('button');
+    submitBtn.type = 'button';
+    submitBtn.className = 'submit-btn';
+    submitBtn.textContent = existing ? 'Mettre à jour ma réponse' : 'Envoyer ma réponse';
+
+    submitBtn.addEventListener('click', function () {
+      var name = nameInput.value.trim();
+      if (!name) {
+        errorMsg.textContent = 'Merci d’indiquer votre nom.';
+        errorMsg.hidden = false;
+        return;
+      }
+      var guestData = [];
+      if (attending) {
+        var rows = guestsContainer.querySelectorAll('.guest-row');
+        for (var i = 0; i < rows.length; i++) {
+          var gName = rows[i].querySelector('[data-role=guest-name]').value.trim();
+          var gPlatSelect = rows[i].querySelector('[data-role=guest-plat]');
+          var gFormulaSelect = rows[i].querySelector('[data-role=guest-formula]');
+          var gEntreeSelect = rows[i].querySelector('[data-role=guest-entree]');
+          if (gName) {
+            guestData.push({
+              name: gName,
+              formula: gFormulaSelect ? gFormulaSelect.value : 'adulte',
+              entree: gEntreeSelect ? gEntreeSelect.value : undefined,
+              plat: gPlatSelect.value,
+              platType: gPlatSelect.getAttribute('data-plat-type') === 'vegetarien' ? 'vegetarien' : 'plat',
+              dessert: rows[i].querySelector('[data-role=guest-dessert]').value,
+              boisson: rows[i].querySelector('[data-role=guest-boisson]').value
+            });
+          }
+        }
+        if (guestData.length === 0) {
+          errorMsg.textContent = 'Merci d’indiquer au moins un convive et son menu.';
+          errorMsg.hidden = false;
+          return;
+        }
+      }
+      errorMsg.hidden = true;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Envoi en cours…';
+
+      var entry = {
+        id: existing ? existing.id : uid(),
+        name: name,
+        attending: attending,
+        guests: guestData,
+        note: noteInput.value.trim(),
+        submittedAt: new Date().toISOString()
+      };
+
+      submitEntry(entry, function (ok, message) {
+        if (ok) {
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entry)); } catch (e) {}
+          renderApp();
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.textContent = existing ? 'Mettre à jour ma réponse' : 'Envoyer ma réponse';
+          errorMsg.textContent = message;
+          errorMsg.hidden = false;
+        }
+      });
+    });
+
+    card.appendChild(nameField);
+    card.appendChild(attendField);
+    card.appendChild(guestsField);
+    card.appendChild(noteField);
+    card.appendChild(errorMsg);
+    card.appendChild(submitBtn);
+
+    var note = document.createElement('p');
+    note.className = 'form-note';
+    note.textContent = 'Votre réponse est enregistrée directement sur cette page.';
+    card.appendChild(note);
+
+    slot.appendChild(card);
+  }
+
+  function submitEntry(entry, cb) {
+    try { sessionStorage.setItem(PENDING_KEY, JSON.stringify(entry)); } catch (e) {}
+
+    var idx = state.responses.findIndex(function (r) { return r.id === entry.id; });
+    var nextResponses = state.responses.slice();
+    if (idx >= 0) nextResponses[idx] = entry; else nextResponses.push(entry);
+    var nextState = { responses: nextResponses };
+
+    if (!window.claude || !window.claude.use) {
+      cb(false, 'L’enregistrement automatique n’est pas disponible ici. Merci de nous contacter directement pour confirmer.');
+      return;
+    }
+
+    window.claude.use('artifact').then(function (artifact) {
+      if (!artifact) {
+        cb(false, 'L’enregistrement automatique n’est pas disponible ici. Merci de nous contacter directement pour confirmer.');
+        return;
+      }
+      artifact.publish(buildFullDocument(nextState)).then(function () {
+        try { sessionStorage.removeItem(PENDING_KEY); } catch (e) {}
+        cb(true);
+      }).catch(function (err) {
+        var code = err && err.code;
+        if (code === 'conflict') {
+          cb(false, 'Une autre réponse vient d’être enregistrée, la page se met à jour. Merci de renvoyer votre réponse dans un instant.');
+        } else if (code === 'not_writer' || code === 'not_granted' || code === 'consent_required') {
+          cb(false, 'Cette page est en lecture seule pour vous : merci de confirmer votre présence directement auprès d’Axelle & Antonio.');
+        } else {
+          cb(false, 'Une erreur est survenue, merci de réessayer.');
+        }
+      });
+    }).catch(function () {
+      cb(false, 'Une erreur est survenue, merci de réessayer.');
+    });
+  }
+
+  function renderConfirmation(slot, entry) {
+    slot.innerHTML = '';
+    var card = document.createElement('div');
+    card.className = 'confirm-card';
+    var h3 = document.createElement('h3');
+    h3.textContent = entry.attending ? 'Merci, ' + entry.name + ' \u{1F90D}' : 'Merci pour votre réponse';
+    var p = document.createElement('p');
+    p.textContent = entry.attending
+      ? 'Votre présence est bien enregistrée, avec ' + entry.guests.length + ' personne(s). À très bientôt !'
+      : 'Nous sommes désolés que vous ne puissiez pas être là, merci de nous l’avoir fait savoir.';
+    var editBtn = document.createElement('button');
+    editBtn.type = 'button';
+    editBtn.className = 'edit-link';
+    editBtn.textContent = 'Modifier ma réponse';
+    editBtn.addEventListener('click', function () { renderForm(slot, entry); });
+    card.appendChild(h3);
+    card.appendChild(p);
+    card.appendChild(editBtn);
+    slot.appendChild(card);
+  }
+
+  function deleteResponse(id, btn) {
+    var target = state.responses.find(function (r) { return r.id === id; });
+    var label = target ? target.name : 'cette personne';
+    if (!window.confirm('Supprimer définitivement la réponse de ' + label + ' ?')) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Suppression…';
+
+    var nextResponses = state.responses.filter(function (r) { return r.id !== id; });
+    var nextState = { responses: nextResponses };
+
+    function fail(message) {
+      btn.disabled = false;
+      btn.textContent = 'Supprimer cette réponse';
+      alert(message);
+    }
+
+    if (!window.claude || !window.claude.use) {
+      fail('Suppression indisponible ici. Réessayez depuis le lien publié.');
+      return;
+    }
+
+    window.claude.use('artifact').then(function (artifact) {
+      if (!artifact) { fail('Suppression indisponible ici. Réessayez depuis le lien publié.'); return; }
+      artifact.publish(buildFullDocument(nextState)).then(function () {
+        renderAdmin(document.getElementById('admin-panel'));
+      }).catch(function (err) {
+        if (err && err.code === 'conflict') return;
+        fail('Une erreur est survenue, merci de
