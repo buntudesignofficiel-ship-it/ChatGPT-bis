@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Axelle &amp; Antonio — 26.09.2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link id="font-link" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style id="page-style">
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { background: #ffffff; }
+  body {
+    margin: 0;
+    background: #ffffff;
+    color: #171412;
+    font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
+    font-size: 18px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+  body.intro-lock { position: fixed; inset: 0; width: 100%; overflow: hidden; }
+  input, select, textarea, button { font-size: 16px; }
+  #root { max-width: 640px; margin: 0 auto; overflow-x: hidden; }
+  section, footer { padding: 3.2rem 1.6rem; }
+  h1, h2 { font-family: 'Playfair Display', Georgia, serif; font-weight: 500; margin: 0; }
+  p { margin: 0 0 1rem; }
+  .hero {
+    background: #171412;
+    color: #ffffff;
+    text-align: center;
+    padding: 4.5rem 1.6rem;
+  }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.35em;
+    font-size: 0.72rem;
+    color: #d8d2c8;
+    margin: 0 0 1.6rem;
+  }
+  .names {
+    font-size: clamp(2.4rem, 9vw, 3.4rem);
+    letter-spacing: 0.02em;
+  }
+  .names .amp { font-style: italic; color: #cbbfa5; padding: 0 0.35rem; font-weight: 400; }
+  .hero .date {
+    margin-top: 1.6rem;
+    letter-spacing: 0.28em;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #e8e3d9;
+  }
+  .intro { text-align: center; }
+  .intro p { color: #171412; }
+  .intro-emph { font-style: italic; color: #4a4540; }
+  .timeline { border-top: 1px solid #e3ddd0; }
+  .timeline h2 { text-align: center; font-size: 1.7rem; margin-bottom: 0.3rem; }
+  .timeline-date {
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.78rem;
+    color: #7a746a;
+    margin-bottom: 2.4rem;
+  }
+  .timeline-track { position: relative; }
+  .timeline-list { list-style: none; margin: 0; padding: 0.5rem 0 0.5rem 1.6rem; position: relative; }
+  .timeline-list::before {
+    content: "";
+    position: absolute;
+    left: 0.35rem;
+    top: 0.9rem;
+    bottom: 0.9rem;
+    width: 2px;
+    background: #d8d2c4;
+  }
+  .timeline-progress {
+    position: absolute; left: 0.35rem; top: 0.9rem; width: 2px; height: 0;
+    background: #171412; z-index: 1;
+  }
+  .timeline-list li {
+    position: relative; padding: 0 0 2.6rem 1.6rem;
+    transform: scale(0.97); opacity: 0.55; transform-origin: left center;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    will-change: transform, opacity;
+  }
+  .timeline-list li::before {
+    content: "";
+    position: absolute;
+    left: -0.78rem;
+    top: 0.35rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #d8d2c4;
+    z-index: 2;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  .timeline-list li:last-child { padding-bottom: 0; }
+  .timeline-list li.is-passed { opacity: 0.8; }
+  .timeline-list li.is-passed::before { background: #171412; }
+  .timeline-list li.is-focused { opacity: 1; transform: scale(1.06); }
+  .timeline-list li.is-focused::before { background: #171412; box-shadow: 0 0 0 5px rgba(23,20,18,0.15); }
+  .timeline-list .time {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.04em;
+  }
+  .timeline-list .ttl { display: block; font-weight: 500; }
+  .timeline-list .loc, .timeline-list .loc-link {
+    display: inline-block; color: #7a746a; font-size: 0.92rem; font-style: italic;
+    text-decoration: underline; text-decoration-color: #cfc8b9; text-underline-offset: 2px;
+  }
+  .timeline-list .loc-link:hover { text-decoration-color: #171412; color: #171412; }
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-progress { display: none; }
+    .timeline-list li { transition: none; transform: none; opacity: 1; }
+  }
+
+  /* Travel map timeline */
+  .travel-map-timeline {
+    border-top: 1px solid #e3ddd0;
+    padding-bottom: 4.4rem;
+  }
+
+  .travel-map {
+    position: relative;
+    height: 620px;
+    margin-top: 1.2rem;
+  }
+
+  .travel-path-svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 42%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  #travel-path-progress {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+  }
+
+  .travel-waypoint {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #d8d2c4;
+    border: 1px solid #171412;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    pointer-events: none;
+    transition: background 0.18s ease, box-shadow 0.18s ease;
+  }
+  .travel-waypoint.is-passed {
+    background: #171412;
+  }
+  .travel-waypoint.is-current {
+    background: #171412;
+    box-shadow: 0 0 0 4px rgba(23,20,18,0.10);
+  }
+
+  .travel-dot {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #171412;
+    box-shadow: 0 0 0 5px rgba(23,20,18,0.10);
+    transform: translate(-50%, -50%);
+    z-index: 6;
+    pointer-events: none;
+    will-change: left, top;
+  }
+
+  .travel-steps {
+    position: relative;
+    height: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .travel-step {
+    position: absolute;
+    width: 58%;
+    margin: 0;
+    opacity: 0.58;
+    transform: scale(0.95);
+    transform-origin: left center;
+    transition: none;
+    will-change: transform, opacity;
+  }
+
+  .travel-step .time {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.02rem;
+    letter-spacing: 0.04em;
+  }
+
+  .travel-step .ttl {
+    display: block;
+    font-weight: 500;
+    font-size: 1.06rem;
+    line-height: 1.22;
+    transform-origin: left center;
+    will-change: transform;
+  }
+
+  .travel-step .loc,
+  .travel-step .loc-link {
+    display: inline-block;
+    color: #7a746a;
+    font-size: 0.92rem;
+    font-style: italic;
+    text-decoration: underline;
+    text-decoration-color: #cfc8b9;
+    text-underline-offset: 2px;
+  }
+
+  .travel-step.is-focused {
+    opacity: 1;
+  }
+
+  .travel-step.is-focused .ttl {
+    color: #171412;
+  }
+
+  /* Alternating positions make the route feel like a map */
+  .travel-step-0 { left: 28%; top: 2%; }
+  .travel-step-1 { left: 43%; top: 21%; }
+  .travel-step-2 { left: 20%; top: 42%; }
+  .travel-step-3 { left: 45%; top: 65%; }
+  .travel-step-4 { left: 30%; top: 88%; }
+
+  @media (max-width: 480px) {
+    .travel-map {
+      height: 650px;
+    }
+    .travel-path-svg {
+      width: 46%;
+    }
+    .travel-step {
+      width: 62%;
+    }
+    .travel-step-0 { left: 29%; top: 2%; }
