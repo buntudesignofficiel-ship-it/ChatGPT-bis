@@ -7,87 +7,11 @@
   <style>
     html,body{margin:0;min-height:100%;background:#fff;color:#171412;font-family:Georgia,serif}
     .loading{min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px;font-style:italic;color:#7a746a}
+    .loading button{margin-top:16px;padding:10px 16px;border:1px solid #cfc8b9;background:#fff;color:#171412;border-radius:6px}
   </style>
 </head>
 <body>
   <div class="loading" id="loader">Chargement de l’invitation…</div>
-  <script>
-    (function(){
-      var BUILD = '20260820-002';
-      var loader = document.getElementById('loader');
-
-      function withTimeout(promise, ms) {
-        return Promise.race([
-          promise,
-          new Promise(function(_, reject){
-            setTimeout(function(){ reject(new Error('timeout')); }, ms);
-          })
-        ]);
-      }
-
-      function fetchText(url) {
-        var busted = url + '?v=' + BUILD;
-        if (window.fetch) {
-          return withTimeout(fetch(busted, { cache: 'no-store' }).then(function(r){
-            if (!r.ok) throw new Error(url + ' HTTP ' + r.status);
-            return r.text();
-          }), 8000).catch(function(){
-            return xhrText(busted);
-          });
-        }
-        return xhrText(busted);
-      }
-
-      function xhrText(url) {
-        return new Promise(function(resolve, reject){
-          var xhr = new XMLHttpRequest();
-          xhr.open('GET', url, true);
-          xhr.timeout = 8000;
-          xhr.onreadystatechange = function(){
-            if (xhr.readyState === 4) {
-              if (xhr.status >= 200 && xhr.status < 300) resolve(xhr.responseText);
-              else reject(new Error('XHR ' + xhr.status));
-            }
-          };
-          xhr.onerror = function(){ reject(new Error('network')); };
-          xhr.ontimeout = function(){ reject(new Error('timeout')); };
-          xhr.send();
-        });
-      }
-
-      function loadAllParts() {
-        var parts = [];
-        var chain = Promise.resolve();
-        for (var i = 1; i <= 8; i++) {
-          (function(n){
-            chain = chain.then(function(){
-              if (loader) loader.textContent = 'Chargement de l’invitation… ' + n + '/8';
-              var name = 'parts/part-' + (n < 10 ? '0' + n : n) + '.txt';
-              return fetchText(name).then(function(txt){ parts.push(txt); });
-            });
-          })(i);
-        }
-        return chain.then(function(){ return parts.join(''); });
-      }
-
-      loadAllParts().then(function(html){
-        html = html.replace('</head>', '<link rel="stylesheet" href="door3d.css?v=' + BUILD + '"><link rel="stylesheet" href="enhancements.css?v=' + BUILD + '"></head>');
-        var bodyEnd = html.lastIndexOf('</body>');
-        if (bodyEnd !== -1) {
-          html = html.slice(0, bodyEnd) +
-            '<script src="supabase-rsvp.js?v=' + BUILD + '"><\\/script>' +
-            '<script src="admin-delete.js?v=' + BUILD + '"><\\/script>' +
-            '<script src="enhancements.js?v=' + BUILD + '"><\\/script>' +
-            html.slice(bodyEnd);
-        }
-        document.open();
-        document.write(html);
-        document.close();
-      }).catch(function(e){
-        document.body.innerHTML = '<div class="loading">Impossible de charger l’invitation.<br>Veuillez actualiser la page.</div>';
-        console.error('Invitation loader error:', e);
-      });
-    })();
-  </script>
+  <script src="loader.js?v=20260820-003"></script>
 </body>
 </html>
