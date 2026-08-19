@@ -1,0 +1,173 @@
+n fillOptions(select, items) {
+    items.forEach(function (item) {
+      var opt = document.createElement('option');
+      opt.value = item.id;
+      opt.textContent = item.label;
+      select.appendChild(opt);
+    });
+  }
+
+  function renderGuestRows(container, guests) {
+    container.innerHTML = '';
+    guests.forEach(function (g, idx) {
+      var row = document.createElement('div');
+      row.className = 'guest-row';
+
+      var head = document.createElement('div');
+      head.className = 'guest-row-head';
+
+      var nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.placeholder = 'Prénom';
+      nameInput.value = g.name || '';
+      nameInput.setAttribute('data-role', 'guest-name');
+
+      var removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'remove-guest';
+      removeBtn.textContent = '×';
+      removeBtn.title = 'Retirer';
+      removeBtn.disabled = guests.length <= 1;
+      removeBtn.addEventListener('click', function () {
+        if (guests.length <= 1) return;
+        guests.splice(idx, 1);
+        renderGuestRows(container, guests);
+      });
+
+      head.appendChild(nameInput);
+      head.appendChild(removeBtn);
+
+      var menuGrid = document.createElement('div');
+      menuGrid.className = 'guest-menu-grid';
+
+      if (!g.formula) g.formula = 'adulte';
+      var menu = MENU[g.formula];
+
+      var formulaF = buildMenuField('Formule', 'guest-formula');
+      fillOptions(formulaF.select, [
+        { id: 'adulte', label: 'Formule complète' },
+        { id: 'enfant', label: 'Formule enfant' }
+      ]);
+      formulaF.select.value = g.formula;
+      formulaF.select.addEventListener('change', function () {
+        guests[idx].formula = formulaF.select.value;
+        renderGuestRows(container, guests);
+      });
+      menuGrid.appendChild(formulaF.field);
+
+      if (g.formula === 'adulte') {
+        var entreeF = buildMenuField('Entrée', 'guest-entree');
+        fillOptions(entreeF.select, menu.entree);
+        entreeF.select.value = validOrDefault(menu.entree, g.entree);
+        menuGrid.appendChild(entreeF.field);
+      }
+
+      var platF = buildMenuField('Plat', 'guest-plat');
+      var platGroup = document.createElement('optgroup');
+      platGroup.label = 'Plat';
+      fillOptions(platGroup, menu.plat);
+      var vegGroup = document.createElement('optgroup');
+      vegGroup.label = 'Proposition végétarienne';
+      fillOptions(vegGroup, menu.vegetarien);
+      platF.select.appendChild(platGroup);
+      platF.select.appendChild(vegGroup);
+      var allPlat = menu.plat.concat(menu.vegetarien);
+      var platValue = allPlat.some(function (m) { return m.id === g.plat; }) ? g.plat : menu.plat[0].id;
+      var platType = menu.vegetarien.some(function (m) { return m.id === platValue; }) ? 'vegetarien' : 'plat';
+      platF.select.value = platValue;
+      platF.select.setAttribute('data-plat-type', platType);
+      platF.select.addEventListener('change', function () {
+        var isVeg = menu.vegetarien.some(function (m) { return m.id === platF.select.value; });
+        platF.select.setAttribute('data-plat-type', isVeg ? 'vegetarien' : 'plat');
+      });
+      menuGrid.appendChild(platF.field);
+
+      var dessertF = buildMenuField('Dessert', 'guest-dessert');
+      fillOptions(dessertF.select, menu.dessert);
+      dessertF.select.value = validOrDefault(menu.dessert, g.dessert);
+      menuGrid.appendChild(dessertF.field);
+
+      var boissonF = buildMenuField('Boisson', 'guest-boisson');
+      fillOptions(boissonF.select, menu.boisson);
+      boissonF.select.value = validOrDefault(menu.boisson, g.boisson);
+      menuGrid.appendChild(boissonF.field);
+
+      row.appendChild(head);
+      row.appendChild(menuGrid);
+      container.appendChild(row);
+    });
+  }
+
+  function renderForm(slot, existing) {
+    slot.innerHTML = '';
+
+    var card = document.createElement('div');
+    card.className = 'rsvp-card';
+
+    var nameField = document.createElement('div');
+    nameField.className = 'field';
+    nameField.innerHTML = '<label for="rsvp-name">Votre nom</label>';
+    var nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.id = 'rsvp-name';
+    nameInput.placeholder = 'Nom et prénom';
+    nameInput.value = existing ? existing.name : '';
+    nameField.appendChild(nameInput);
+
+    var attendField = document.createElement('div');
+    attendField.className = 'field';
+    attendField.innerHTML = '<label>Votre réponse</label>';
+    var toggle = document.createElement('div');
+    toggle.className = 'attend-toggle';
+    var yesBtn = document.createElement('button');
+    yesBtn.type = 'button';
+    yesBtn.textContent = 'Oui, avec joie \u{1F90D}';
+    var noBtn = document.createElement('button');
+    noBtn.type = 'button';
+    noBtn.textContent = 'Nous ne pourrons pas venir';
+    toggle.appendChild(yesBtn);
+    toggle.appendChild(noBtn);
+    attendField.appendChild(toggle);
+
+    var attending = existing ? !!existing.attending : true;
+
+    var guestsField = document.createElement('div');
+    guestsField.className = 'field';
+    guestsField.innerHTML = '<label>Convives et menus</label>';
+    var guestsContainer = document.createElement('div');
+    var guests = existing && existing.guests && existing.guests.length
+      ? existing.guests.map(function (g) {
+          return { name: g.name, formula: g.formula, entree: g.entree, platType: g.platType, plat: g.plat, dessert: g.dessert, boisson: g.boisson };
+        })
+      : [{ name: existing ? existing.name : '' }];
+    renderGuestRows(guestsContainer, guests);
+    var addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.className = 'add-guest';
+    addBtn.textContent = '+ Ajouter un convive';
+    addBtn.addEventListener('click', function () {
+      if (guests.length >= 8) return;
+      guests.push({ name: '' });
+      renderGuestRows(guestsContainer, guests);
+    });
+    guestsField.appendChild(guestsContainer);
+    guestsField.appendChild(addBtn);
+    var drinksNote = document.createElement('p');
+    drinksNote.className = 'form-note';
+    drinksNote.textContent = 'En plus de la formule, 2 boissons supplémentaires par personne seront proposées sur place, au choix parmi : soft classique, citronnade ou thé glacé maison, mocktail.';
+    guestsField.appendChild(drinksNote);
+
+    var noteField = document.createElement('div');
+    noteField.className = 'field';
+    noteField.innerHTML = '<label for="rsvp-note">Allergies, régime particulier ou petit mot</label>';
+    var noteInput = document.createElement('textarea');
+    noteInput.id = 'rsvp-note';
+    noteInput.value = existing ? (existing.note || '') : '';
+    noteField.appendChild(noteInput);
+
+    function syncAttendingUI() {
+      yesBtn.classList.toggle('selected', attending);
+      noBtn.classList.toggle('selected', !attending);
+      guestsField.style.display = attending ? '' : 'none';
+    }
+    yesBtn.addEventListener('click', func
