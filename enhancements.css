@@ -12,4 +12,11 @@
 
 .dresscode .dresscode-palette,.dresscode .dresscode-note{display:none!important}.aa-dress-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:1.35rem 0 .8rem}.aa-dress-card{border:1px solid #e0d6ca;background:#fffdf9;padding:1rem;text-align:center}.aa-dress-icon{width:46px;height:58px;margin:0 auto .45rem;color:#9f7948}.aa-dress-icon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}.aa-dress-card strong{display:block;font-family:'Playfair Display',Georgia,serif;font-weight:500;margin-bottom:.55rem}.aa-colors{display:flex;justify-content:center;gap:8px;align-items:center}.aa-color{width:24px;height:24px;border-radius:50%;border:1px solid #bfb4a7;display:inline-block}.aa-color-white{background:#fff}.aa-color-black{background:#111}.aa-color-offwhite{background:#f1eadc}.aa-dress-copy{text-align:center!important;color:#665f57!important;margin-top:.65rem!important}
 
-@media(max-width:520px){.aa-countdown{gap:5px}.aa-countdown-box strong{font-size:1.18rem}.aa-countdown-box span{font-size:.52rem;letter-spacing:.08em}.aa-dress-grid{grid-template-columns:1fr}.travel-step{font-size:.98rem!important}.travel-step .ttl{font-size:1.04rem!important}.aa-parc-step .loc-link{margin-left:14px!important}.aa-places-carousel{padding-left:.8rem!important;padding-right:.8rem!important}.aa-place-slides{min-height:430px}.aa-place-slide h2{font-size:1.4rem}.aa-place-slide p{font-size:.94rem}}
+@media(max-width:520px){.aa-countdown{gap:5px}.aa-countdown-box strong{font-size:1.18rem}.aa-countdown-box span{font-size:.52rem;letter-spacing:.08em}.aa-dress-grid{grid-template-columns:1fr}.travel-step{font-size:.98rem!important}.travel-step .ttl{font-size:1.04rem!important}.aa-parc-step .loc-link{margin-left:14px!important}.aa-places-carousel{padding-left:.8rem!important;padding-right:.8rem!important}.aa-place-slides{min-height:430px}.aa-place-slide h2{font-size:1.4rem}.aa-place-slide p{font-size:.94rem}
+  /* Réglage individuel de chaque étape mobile : ne déplace jamais le groupe entier. */
+  .travel-step-0{left:24%!important}
+  .travel-step-1{left:36%!important}
+  .travel-step-2{left:28%!important}
+  .travel-step-3{left:37%!important}
+  .travel-step-4{left:24%!important}
+}
