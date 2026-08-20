@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var BUILD = '20260820-010';
+  var BUILD = '20260820-011';
   var loader = document.getElementById('loader');
 
   function setStatus(msg){ if(loader) loader.textContent = msg; }
@@ -28,9 +28,11 @@
   chain.then(function(){
     var html = parts.join('');
 
-    // Purge the legacy book/door intro before the document is written.
+    // The Adobe video is the only intro. Remove all legacy intro remnants before rendering.
+    html = html.replace(/(\.error-msg\s*\{[^}]*\})[\s\S]*?(?=\s*\[data-reveal\]\s*\{)/i, '$1\n\n');
     html = html.replace(/<template id="intro-template">[\s\S]*?<\/template>\s*/i, '');
     html = html.replace(/<div id="intro-mount"><\/div>\s*/i, '');
+    html = html.replace(/\s*function initIntro\(\)\s*\{[\s\S]*?(?=\s*function renderApp\s*\()/i, '\n\n');
     html = html.replace(/\binitIntro\(\);/g, 'markIntroDismissed();');
 
     html = html.replace('</head>',
