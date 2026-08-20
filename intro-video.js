@@ -59,9 +59,7 @@
       if(t>=Math.max(2.55,d-0.7)) white.style.opacity='1';
     });
     video.addEventListener('ended',finish);
-    video.addEventListener('error',function(){
-      fallback.style.display='block';
-    });
+    video.addEventListener('error',function(){ setTimeout(finish,120); });
 
     fallback.addEventListener('click',function(){
       fallback.style.display='none';
