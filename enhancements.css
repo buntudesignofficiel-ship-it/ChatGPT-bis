@@ -70,10 +70,9 @@
 .aa-color-offwhite{background:#f1eadc}
 .aa-dress-copy{text-align:center!important;color:#665f57!important;margin-top:.65rem!important}
 
-/* Intro plein écran : vraie photo d'une double porte française du XVIIIe siècle.
-   La même photo est découpée en deux battants afin que l'ouverture 3D révèle réellement le site derrière. */
+/* Intro plein écran : scène complète validée (image 3), découpée en deux battants. */
 .intro-overlay{
-  background:#171412!important;
+  background:#efe6d8!important;
   width:100vw!important;
   height:100vh!important;
   height:100svh!important;
@@ -93,6 +92,7 @@
   display:flex!important;
   align-items:stretch!important;
   justify-content:stretch!important;
+  background:#efe6d8!important;
 }
 .book{
   width:100vw!important;
@@ -120,33 +120,33 @@
   height:100%!important;
   border:0!important;
   border-radius:0!important;
-  box-shadow:0 0 32px rgba(0,0,0,.24)!important;
-  background-color:#4b3426!important;
-  background-image:url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Double_door-_four_panels%2C_two_pilasters%2C_three_gilt_moldings_for_the_door_frame_MET_ES7661.jpg?width=1200")!important;
+  box-shadow:0 0 28px rgba(0,0,0,.18)!important;
+  background-color:#efe6d8!important;
+  background-image:url("https://images.openai.com/static-rsc-4/cSxuSWnie5RtfQSNB4jemndmUtxb1azT1SmLQ-1v2FTQpThkp6SN6oz8tKYry-1Op4hvZvVQ4O6yP-YVx0RK_v251h-dlwY7PBMVUrk7Bvq6Jw4dXwhAI5KV6tM9xczSW3gDh0KLQYS9KSkByLDqDUsv7MmWdoEjlP_0to3uwV51M2H94DSX4toNEWVsHjdX?purpose=fullsize")!important;
   background-repeat:no-repeat!important;
   background-size:200% 100%!important;
 }
 .book-cover-left{
   left:0!important;
-  width:50.15%!important;
+  width:50.1%!important;
   background-position:left center!important;
   transform-origin:left center!important;
 }
 .book-cover-right{
   right:0!important;
-  width:50.15%!important;
+  width:50.1%!important;
   background-position:right center!important;
   transform-origin:right center!important;
 }
 .book-cover::before,.book-cover::after{content:none!important;display:none!important}
 .book-seal{
-  width:68px!important;
-  height:68px!important;
-  background:rgba(249,240,222,.94)!important;
-  color:#675039!important;
-  border:1px solid rgba(180,138,82,.75)!important;
-  box-shadow:0 7px 22px rgba(0,0,0,.22)!important;
-  backdrop-filter:blur(4px);
+  width:72px!important;
+  height:72px!important;
+  background:rgba(250,243,231,.95)!important;
+  color:#6c5537!important;
+  border:1px solid rgba(180,138,82,.68)!important;
+  box-shadow:0 8px 24px rgba(64,45,28,.18)!important;
+  backdrop-filter:blur(5px);
 }
 .book-page-eyebrow{max-width:340px;margin-left:auto!important;margin-right:auto!important;line-height:1.35!important}
 .book-page-names{font-size:1.7rem!important}
@@ -164,5 +164,8 @@
     height:100svh!important;
     height:100dvh!important;
   }
-  .book-cover{background-size:200% 100%!important}
+  .book-cover{
+    background-size:200% 100%!important;
+    background-position-y:center!important;
+  }
 }
