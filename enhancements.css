@@ -27,6 +27,28 @@
 .travel-step .loc-link{margin-top:.35rem;padding:.28rem .62rem;border:1px solid #d7c6ad;border-radius:999px;text-decoration:none!important;background:#fffdf9;color:#6f5a40!important;font-style:normal!important;font-size:.78rem!important}
 .travel-step .loc-link:hover{background:#f5ede1}
 
+/* Timeline mobile : toutes les étapes gardent exactement la même taille */
+.travel-step{
+  transform:none!important;
+  opacity:1!important;
+  font-size:1rem!important;
+  font-weight:400!important;
+}
+.travel-step .time{
+  font-size:1.02rem!important;
+  font-weight:400!important;
+  line-height:1.25!important;
+}
+.travel-step .ttl{
+  font-size:1.06rem!important;
+  font-weight:500!important;
+  line-height:1.22!important;
+  transform:none!important;
+}
+.travel-step.is-focused,.travel-step.is-passed{transform:none!important;opacity:1!important}
+.travel-step.is-focused .ttl,.travel-step.is-passed .ttl{transform:none!important;font-size:1.06rem!important;font-weight:500!important}
+.travel-step .aa-event-icon{transform:none!important}
+
 /* Bloc photo mairie */
 .aa-mairie{padding-top:2.2rem!important;padding-bottom:2.7rem!important;border-top:1px solid #e6ddd1;text-align:center;background:linear-gradient(180deg,#fff,#fbf7ef)}
 .aa-mairie h2{font-size:1.55rem;margin-bottom:.35rem}
@@ -48,16 +70,45 @@
 .aa-color-offwhite{background:#f1eadc}
 .aa-dress-copy{text-align:center!important;color:#665f57!important;margin-top:.65rem!important}
 
-/* Intro transformée visuellement en deux portes de château */
-.intro-overlay{background:radial-gradient(circle at 50% 42%,#fff8df 0%,#eee1c9 40%,#cbb99b 100%)!important}
-.book{width:min(86vw,620px)!important;height:min(66vh,520px)!important;max-height:520px!important;filter:drop-shadow(0 28px 36px rgba(40,27,14,.28))!important}
-.book-page{background:linear-gradient(rgba(255,251,239,.88),rgba(255,248,232,.94)),radial-gradient(circle at 50% 68%,#fff9e8 0%,#ead8b7 72%)!important;border:1px solid rgba(144,111,68,.35)!important}
-.book-cover{background:linear-gradient(90deg,#4c4034 0%,#1b1714 42%,#0e0d0c 100%)!important;border-color:#735f47!important}
-.book-cover::before{content:"";position:absolute;inset:7% 9%;border:2px solid #b48a52;border-radius:48% 48% 4% 4%/20% 20% 4% 4%;background:repeating-linear-gradient(90deg,transparent 0 18px,rgba(190,149,88,.72) 18px 20px,transparent 20px 36px);box-shadow:inset 0 0 0 1px rgba(245,218,164,.18)}
-.book-cover::after{content:""!important;position:absolute!important;left:9%!important;right:9%!important;top:48%!important;height:2px!important;background:#b48a52!important;opacity:.8!important;box-shadow:0 -78px 0 rgba(180,138,82,.7),0 78px 0 rgba(180,138,82,.7)!important}
-.book-cover-left{border-radius:12px 0 0 12px!important}
-.book-cover-right{border-radius:0 12px 12px 0!important}
-.book-seal{background:#f8edd9!important;color:#6f5637!important;border:1px solid #b48a52!important}
+/* Intro : deux vrais battants de porte, sans effet "cage".
+   Les décors ci-dessous sont des SVG intégrés : très légers, nets sur Retina et sans chargement externe. */
+.intro-overlay{background:linear-gradient(180deg,#f8f2e8 0%,#e9dcc8 100%)!important}
+.book{
+  width:min(88vw,600px)!important;
+  height:min(60vh,500px)!important;
+  max-height:500px!important;
+  filter:drop-shadow(0 22px 28px rgba(49,35,21,.22))!important;
+  border-radius:14px;
+  overflow:visible;
+}
+.book-page{
+  background:#fffaf0!important;
+  border:1px solid rgba(144,111,68,.24)!important;
+  box-shadow:none!important;
+}
+.book-cover{
+  border:1px solid #6e4f34!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 5px 15px rgba(35,24,14,.16)!important;
+  background-color:#6f4a2e!important;
+  background-repeat:no-repeat!important;
+  background-size:100% 100%!important;
+  background-position:center!important;
+}
+.book-cover-left{
+  border-radius:14px 2px 2px 14px!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 500'%3E%3Cdefs%3E%3ClinearGradient id='w' x1='0' x2='1'%3E%3Cstop stop-color='%23513724'/%3E%3Cstop offset='.48' stop-color='%23805a39'/%3E%3Cstop offset='1' stop-color='%23563b27'/%3E%3C/linearGradient%3E%3ClinearGradient id='p' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop stop-color='%23906a47'/%3E%3Cstop offset='1' stop-color='%2360442d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='500' rx='14' fill='url(%23w)'/%3E%3Crect x='27' y='28' width='246' height='444' rx='8' fill='none' stroke='%23c6a273' stroke-width='5'/%3E%3Crect x='50' y='56' width='200' height='155' rx='7' fill='url(%23p)' stroke='%23d8bc92' stroke-width='3'/%3E%3Crect x='50' y='244' width='200' height='198' rx='7' fill='url(%23p)' stroke='%23d8bc92' stroke-width='3'/%3E%3Cpath d='M65 74h170M65 262h170' stroke='%23f0dcc1' stroke-opacity='.32' stroke-width='2'/%3E%3Ccircle cx='262' cy='250' r='9' fill='%23d2ad6f'/%3E%3Ccircle cx='262' cy='250' r='4' fill='%2383663d'/%3E%3C/svg%3E")!important;
+}
+.book-cover-right{
+  border-radius:2px 14px 14px 2px!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 500'%3E%3Cdefs%3E%3ClinearGradient id='w' x1='1' x2='0'%3E%3Cstop stop-color='%23513724'/%3E%3Cstop offset='.48' stop-color='%23805a39'/%3E%3Cstop offset='1' stop-color='%23563b27'/%3E%3C/linearGradient%3E%3ClinearGradient id='p' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop stop-color='%23906a47'/%3E%3Cstop offset='1' stop-color='%2360442d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='500' rx='14' fill='url(%23w)'/%3E%3Crect x='27' y='28' width='246' height='444' rx='8' fill='none' stroke='%23c6a273' stroke-width='5'/%3E%3Crect x='50' y='56' width='200' height='155' rx='7' fill='url(%23p)' stroke='%23d8bc92' stroke-width='3'/%3E%3Crect x='50' y='244' width='200' height='198' rx='7' fill='url(%23p)' stroke='%23d8bc92' stroke-width='3'/%3E%3Cpath d='M65 74h170M65 262h170' stroke='%23f0dcc1' stroke-opacity='.32' stroke-width='2'/%3E%3Ccircle cx='38' cy='250' r='9' fill='%23d2ad6f'/%3E%3Ccircle cx='38' cy='250' r='4' fill='%2383663d'/%3E%3C/svg%3E")!important;
+}
+.book-cover::before,.book-cover::after{content:none!important;display:none!important}
+.book-seal{
+  background:#f5e7cf!important;
+  color:#6f5637!important;
+  border:1px solid #b48a52!important;
+  box-shadow:0 4px 12px rgba(66,46,25,.16)!important;
+}
 .book-page-eyebrow{max-width:320px;margin-left:auto!important;margin-right:auto!important;line-height:1.35!important}
 .book-page-names{font-size:1.7rem!important}
 
@@ -66,5 +117,7 @@
   .aa-countdown-box strong{font-size:1.18rem}
   .aa-countdown-box span{font-size:.52rem;letter-spacing:.08em}
   .aa-dress-grid{grid-template-columns:1fr}
-  .book{height:min(58vh,430px)!important}
+  .book{height:min(56vh,420px)!important;width:min(90vw,430px)!important}
+  .travel-step{font-size:.98rem!important}
+  .travel-step .ttl,.travel-step.is-focused .ttl,.travel-step.is-passed .ttl{font-size:1.04rem!important}
 }
