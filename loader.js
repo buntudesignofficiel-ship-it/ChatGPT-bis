@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var BUILD = '20260820-004';
+  var BUILD = '20260820-005';
   var loader = document.getElementById('loader');
 
   function setStatus(msg){ if(loader) loader.textContent = msg; }
@@ -38,6 +38,7 @@
     var scripts =
       '<script src="supabase-rsvp.js?v=' + BUILD + '"></script>' +
       '<script src="admin-delete.js?v=' + BUILD + '"></script>' +
+      '<script src="intro-off.js?v=' + BUILD + '"></script>' +
       '<script src="enhancements.js?v=' + BUILD + '"></script>';
 
     html = html.slice(0, bodyEnd) + scripts + html.slice(bodyEnd);
