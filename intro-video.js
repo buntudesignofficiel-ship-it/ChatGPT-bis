@@ -19,8 +19,8 @@
     video.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;background:#fff;';
 
     var announcement=document.createElement('div');
-    announcement.style.cssText='position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;color:#2b241e;opacity:0;transform:translateY(10px);transition:opacity 1s ease,transform 1s ease;pointer-events:none;text-shadow:0 1px 10px rgba(255,255,255,.85);';
-    announcement.innerHTML='<div style="font:italic 18px Georgia,serif;letter-spacing:.04em;margin-bottom:18px">Nous avons une belle nouvelle à vous annoncer</div><div style="font:32px Georgia,serif;line-height:1.15;margin-bottom:14px">Antonio <span style="font-style:italic">&amp;</span> Axelle</div><div style="font:15px Georgia,serif;letter-spacing:.28em">26 · 09 · 2026</div>';
+    announcement.style.cssText='position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;color:#2d2924;opacity:0;transform:translateY(8px);transition:opacity 1s ease,transform 1s ease;pointer-events:none;text-shadow:0 1px 12px rgba(255,255,255,.92);';
+    announcement.innerHTML='<div style="font-family:Georgia,\'Times New Roman\',serif;font-size:11px;font-weight:400;letter-spacing:.34em;text-transform:uppercase;margin-bottom:16px;color:#6e675f">Une bonne nouvelle</div><div style="font-family:Georgia,\'Times New Roman\',serif;font-size:34px;font-weight:700;font-style:italic;line-height:1.08;margin-bottom:14px;color:#221f1b">Antonio <span style="font-weight:600">&amp;</span> Axelle</div><div style="font-family:Georgia,\'Times New Roman\',serif;font-size:12px;font-weight:400;letter-spacing:.36em;color:#6e675f">26 · 09 · 2026</div>';
 
     var white=document.createElement('div');
     white.style.cssText='position:absolute;inset:0;z-index:3;background:#fff;opacity:0;transition:opacity 1s ease;pointer-events:none;';
