@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var BUILD = '20260820-009';
+  var BUILD = '20260820-010';
   var loader = document.getElementById('loader');
 
   function setStatus(msg){ if(loader) loader.textContent = msg; }
@@ -28,7 +28,7 @@
   chain.then(function(){
     var html = parts.join('');
 
-    // Remove the legacy book/door intro completely before the document is written.
+    // Purge the legacy book/door intro before the document is written.
     html = html.replace(/<template id="intro-template">[\s\S]*?<\/template>\s*/i, '');
     html = html.replace(/<div id="intro-mount"><\/div>\s*/i, '');
     html = html.replace(/\binitIntro\(\);/g, 'markIntroDismissed();');
@@ -43,8 +43,8 @@
     var scripts =
       '<script src="supabase-rsvp.js?v=' + BUILD + '"></script>' +
       '<script src="admin-delete.js?v=' + BUILD + '"></script>' +
-      '<script src="intro-video.js?v=' + BUILD + '"></script>' +
-      '<script src="enhancements.js?v=' + BUILD + '"></script>';
+      '<script src="enhancements.js?v=' + BUILD + '"></script>' +
+      '<script src="intro-video.js?v=' + BUILD + '"></script>';
 
     html = html.slice(0, bodyEnd) + scripts + html.slice(bodyEnd);
 
