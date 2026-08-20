@@ -17,6 +17,8 @@
     return '<svg viewBox="0 0 24 24" aria-hidden="true">'+(paths[type]||paths.heart)+'</svg>';
   }
 
+  function pad2(n){ return n<10 ? '0'+n : String(n); }
+
   function addCountdown(){
     var hero=document.querySelector('.hero');
     if(!hero||hero.querySelector('.aa-countdown')) return;
@@ -30,52 +32,61 @@
       '<div class="aa-countdown-box"><strong data-aa-minutes>0</strong><span>minutes</span></div>'+ 
       '<div class="aa-countdown-box"><strong data-aa-seconds>0</strong><span>secondes</span></div>'+ 
       '</div><p class="aa-countdown-caption">Jusqu’au grand jour</p>';
-    date.insertAdjacentElement('afterend',wrap);
+    if(date.parentNode){ date.parentNode.insertBefore(wrap,date.nextSibling); }
     var target=new Date('2026-09-26T10:30:00+02:00').getTime();
     function tick(){
+      if(!document.documentElement.contains(wrap)) return;
       var delta=Math.max(0,target-Date.now());
       var d=Math.floor(delta/86400000); delta%=86400000;
       var h=Math.floor(delta/3600000); delta%=3600000;
       var m=Math.floor(delta/60000); var s=Math.floor((delta%60000)/1000);
-      wrap.querySelector('[data-aa-days]').textContent=d;
-      wrap.querySelector('[data-aa-hours]').textContent=String(h).padStart(2,'0');
-      wrap.querySelector('[data-aa-minutes]').textContent=String(m).padStart(2,'0');
-      wrap.querySelector('[data-aa-seconds]').textContent=String(s).padStart(2,'0');
+      var ed=wrap.querySelector('[data-aa-days]');
+      var eh=wrap.querySelector('[data-aa-hours]');
+      var em=wrap.querySelector('[data-aa-minutes]');
+      var es=wrap.querySelector('[data-aa-seconds]');
+      if(ed) ed.textContent=d;
+      if(eh) eh.textContent=pad2(h);
+      if(em) em.textContent=pad2(m);
+      if(es) es.textContent=pad2(s);
     }
     tick(); setInterval(tick,1000);
   }
 
+  function setHtmlIfChanged(el,html){ if(el && el.innerHTML!==html) el.innerHTML=html; }
+  function setTextIfChanged(el,text){ if(el && el.textContent!==text) el.textContent=text; }
+
   function polishHero(){
     document.title='Antonio & Axelle — 26.09.2026';
-    var eyebrow=document.querySelector('.hero .eyebrow');
-    if(eyebrow) eyebrow.innerHTML='Nous avons une belle nouvelle à vous annoncer :<strong>Nous Nous Marrions</strong>';
-    var names=document.querySelector('.hero .names');
-    if(names) names.innerHTML='<span>Antonio</span><span class="amp">&amp;</span><span>Axelle</span>';
-    var bookEyebrow=document.querySelector('.book-page-eyebrow');
-    if(bookEyebrow) bookEyebrow.textContent='Nous avons une belle nouvelle à vous annoncer : Nous Nous Marrions';
-    var bookNames=document.querySelector('.book-page-names');
-    if(bookNames) bookNames.innerHTML='Antonio &amp; Axelle';
-    var sign=document.querySelector('.signoff > p');
-    if(sign) sign.textContent='Antonio VIEIRA et Axelle MIGUEL';
+    setHtmlIfChanged(document.querySelector('.hero .eyebrow'),'Nous avons une belle nouvelle à vous annoncer :<strong>Nous Nous Marrions</strong>');
+    setHtmlIfChanged(document.querySelector('.hero .names'),'<span>Antonio</span><span class="amp">&amp;</span><span>Axelle</span>');
+    setTextIfChanged(document.querySelector('.book-page-eyebrow'),'Nous avons une belle nouvelle à vous annoncer : Nous Nous Marrions');
+    setHtmlIfChanged(document.querySelector('.book-page-names'),'Antonio &amp; Axelle');
+    setTextIfChanged(document.querySelector('.signoff > p'),'Antonio VIEIRA et Axelle MIGUEL');
   }
 
   function addEventIcons(){
     var steps=document.querySelectorAll('.travel-step');
     if(!steps.length) return;
     var types=['home','mairie','camera','toast','heart'];
-    steps.forEach(function(step,i){
-      if(step.querySelector('.aa-event-icon')) return;
-      var el=document.createElement('span'); el.className='aa-event-icon'; el.innerHTML=icon(types[i]||'heart');
-      step.insertBefore(el,step.firstChild);
-    });
-    document.querySelectorAll('.travel-step .loc-link').forEach(function(a){a.title='Ouvrir ce lieu dans Google Maps';});
+    var i,step,el;
+    for(i=0;i<steps.length;i++){
+      step=steps[i];
+      if(!step.querySelector('.aa-event-icon')){
+        el=document.createElement('span');
+        el.className='aa-event-icon';
+        el.innerHTML=icon(types[i]||'heart');
+        step.insertBefore(el,step.firstChild);
+      }
+    }
+    var links=document.querySelectorAll('.travel-step .loc-link');
+    for(i=0;i<links.length;i++) links[i].title='Ouvrir ce lieu dans Google Maps';
   }
 
   function addMairieSection(){
     if(document.querySelector('.aa-mairie')) return;
     var timeline=document.querySelector('.travel-map-timeline');
     var dress=document.querySelector('.dresscode');
-    if(!timeline||!dress) return;
+    if(!timeline||!dress||!dress.parentNode) return;
     var section=document.createElement('section');
     section.className='aa-mairie';
     section.setAttribute('data-reveal','');
@@ -94,16 +105,41 @@
     grid.className='aa-dress-grid';
     grid.innerHTML='<div class="aa-dress-card"><div class="aa-dress-icon">'+icon('suit')+'</div><strong>Homme</strong><div class="aa-colors"><span class="aa-color aa-color-white" title="Blanc"></span><span class="aa-color aa-color-black" title="Noir"></span></div><p>Blanc et noir</p></div>'+ 
       '<div class="aa-dress-card"><div class="aa-dress-icon">'+icon('dress')+'</div><strong>Femme</strong><div class="aa-colors"><span class="aa-color aa-color-offwhite" title="Blanc cassé"></span></div><p>Blanc cassé</p></div>';
-    if(heading) heading.insertAdjacentElement('afterend',grid); else section.prepend(grid);
-    var paras=Array.from(section.querySelectorAll('p')).filter(function(p){return !p.closest('.aa-dress-card');});
-    paras.forEach(function(p,i){if(i===0){p.className+=' aa-dress-copy';p.textContent='Pour cette journée, nous serions ravis de vous voir dans ces tons.';}else{p.remove();}});
+    if(heading && heading.parentNode) heading.parentNode.insertBefore(grid,heading.nextSibling);
+    else section.insertBefore(grid,section.firstChild);
+    var paras=section.querySelectorAll('p');
+    var kept=false;
+    for(var i=0;i<paras.length;i++){
+      var p=paras[i];
+      var parent=p.parentNode;
+      var insideCard=false;
+      while(parent && parent!==section){ if(parent.className && String(parent.className).indexOf('aa-dress-card')!==-1){ insideCard=true; break; } parent=parent.parentNode; }
+      if(insideCard) continue;
+      if(!kept){ p.className=(p.className||'')+' aa-dress-copy'; p.textContent='Pour cette journée, nous serions ravis de vous voir dans ces tons.'; kept=true; }
+      else if(p.parentNode) p.parentNode.removeChild(p);
+    }
   }
 
   function apply(){
-    polishHero(); addCountdown(); addEventIcons(); addMairieSection(); polishDressCode();
+    if(!document.querySelector('.hero')) return false;
+    polishHero();
+    addCountdown();
+    addEventIcons();
+    addMairieSection();
+    polishDressCode();
+    return true;
   }
 
-  window.addEventListener('load',function(){setTimeout(apply,180);setTimeout(apply,800);});
-  var obs=new MutationObserver(function(){if(document.querySelector('.hero')) apply();});
-  obs.observe(document.documentElement,{childList:true,subtree:true});
+  function boot(){
+    var tries=0;
+    function attempt(){
+      tries++;
+      if(apply() || tries>=12) return;
+      setTimeout(attempt,250);
+    }
+    attempt();
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
+  else boot();
 })();
