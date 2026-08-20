@@ -70,46 +70,85 @@
 .aa-color-offwhite{background:#f1eadc}
 .aa-dress-copy{text-align:center!important;color:#665f57!important;margin-top:.65rem!important}
 
-/* Intro : deux vrais battants de porte, sans effet "cage".
-   Les décors ci-dessous sont des SVG intégrés : très légers, nets sur Retina et sans chargement externe. */
-.intro-overlay{background:linear-gradient(180deg,#f8f2e8 0%,#e9dcc8 100%)!important}
+/* Intro plein écran : vraie photo d'une double porte française du XVIIIe siècle.
+   La même photo est découpée en deux battants afin que l'ouverture 3D révèle réellement le site derrière. */
+.intro-overlay{
+  background:#171412!important;
+  width:100vw!important;
+  height:100vh!important;
+  height:100svh!important;
+  height:100dvh!important;
+  inset:0!important;
+  overflow:hidden!important;
+}
+.intro-scene{
+  width:100vw!important;
+  height:100vh!important;
+  height:100svh!important;
+  height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:stretch!important;
+  justify-content:stretch!important;
+}
 .book{
-  width:min(88vw,600px)!important;
-  height:min(60vh,500px)!important;
-  max-height:500px!important;
-  filter:drop-shadow(0 22px 28px rgba(49,35,21,.22))!important;
-  border-radius:14px;
-  overflow:visible;
+  width:100vw!important;
+  height:100vh!important;
+  height:100svh!important;
+  height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  border-radius:0!important;
+  overflow:visible!important;
+  filter:none!important;
 }
 .book-page{
-  background:#fffaf0!important;
-  border:1px solid rgba(144,111,68,.24)!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  background:linear-gradient(180deg,#fffdf8,#f7f0e5)!important;
+  border:0!important;
   box-shadow:none!important;
 }
 .book-cover{
-  border:1px solid #6e4f34!important;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 5px 15px rgba(35,24,14,.16)!important;
-  background-color:#6f4a2e!important;
+  top:0!important;
+  bottom:0!important;
+  height:100%!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:0 0 32px rgba(0,0,0,.24)!important;
+  background-color:#4b3426!important;
+  background-image:url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Double_door-_four_panels%2C_two_pilasters%2C_three_gilt_moldings_for_the_door_frame_MET_ES7661.jpg?width=1200")!important;
   background-repeat:no-repeat!important;
-  background-size:100% 100%!important;
-  background-position:center!important;
+  background-size:200% 100%!important;
 }
 .book-cover-left{
-  border-radius:14px 2px 2px 14px!important;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 500'%3E%3Cdefs%3E%3ClinearGradient id='w' x1='0' x2='1'%3E%3Cstop stop-color='%23513724'/%3E%3Cstop offset='.48' stop-color='%23805a39'/%3E%3Cstop offset='1' stop-color='%23563b27'/%3E%3C/linearGradient%3E%3ClinearGradient id='p' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop stop-color='%23906a47'/%3E%3Cstop offset='1' stop-color='%2360442d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='500' rx='14' fill='url(%23w)'/%3E%3Crect x='27' y='28' width='246' height='444' rx='8' fill='none' stroke='%23c6a273' stroke-width='5'/%3E%3Crect x='50' y='56' width='200' height='155' rx='7' fill='url(%23p)' stroke='%23d8bc92' stroke-width='3'/%3E%3Crect x='50' y='244' width='200' height='198' rx='7' fill='url(%23p)' stroke='%23d8bc92' stroke-width='3'/%3E%3Cpath d='M65 74h170M65 262h170' stroke='%23f0dcc1' stroke-opacity='.32' stroke-width='2'/%3E%3Ccircle cx='262' cy='250' r='9' fill='%23d2ad6f'/%3E%3Ccircle cx='262' cy='250' r='4' fill='%2383663d'/%3E%3C/svg%3E")!important;
+  left:0!important;
+  width:50.15%!important;
+  background-position:left center!important;
+  transform-origin:left center!important;
 }
 .book-cover-right{
-  border-radius:2px 14px 14px 2px!important;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 500'%3E%3Cdefs%3E%3ClinearGradient id='w' x1='1' x2='0'%3E%3Cstop stop-color='%23513724'/%3E%3Cstop offset='.48' stop-color='%23805a39'/%3E%3Cstop offset='1' stop-color='%23563b27'/%3E%3C/linearGradient%3E%3ClinearGradient id='p' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop stop-color='%23906a47'/%3E%3Cstop offset='1' stop-color='%2360442d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='500' rx='14' fill='url(%23w)'/%3E%3Crect x='27' y='28' width='246' height='444' rx='8' fill='none' stroke='%23c6a273' stroke-width='5'/%3E%3Crect x='50' y='56' width='200' height='155' rx='7' fill='url(%23p)' stroke='%23d8bc92' stroke-width='3'/%3E%3Crect x='50' y='244' width='200' height='198' rx='7' fill='url(%23p)' stroke='%23d8bc92' stroke-width='3'/%3E%3Cpath d='M65 74h170M65 262h170' stroke='%23f0dcc1' stroke-opacity='.32' stroke-width='2'/%3E%3Ccircle cx='38' cy='250' r='9' fill='%23d2ad6f'/%3E%3Ccircle cx='38' cy='250' r='4' fill='%2383663d'/%3E%3C/svg%3E")!important;
+  right:0!important;
+  width:50.15%!important;
+  background-position:right center!important;
+  transform-origin:right center!important;
 }
 .book-cover::before,.book-cover::after{content:none!important;display:none!important}
 .book-seal{
-  background:#f5e7cf!important;
-  color:#6f5637!important;
-  border:1px solid #b48a52!important;
-  box-shadow:0 4px 12px rgba(66,46,25,.16)!important;
+  width:68px!important;
+  height:68px!important;
+  background:rgba(249,240,222,.94)!important;
+  color:#675039!important;
+  border:1px solid rgba(180,138,82,.75)!important;
+  box-shadow:0 7px 22px rgba(0,0,0,.22)!important;
+  backdrop-filter:blur(4px);
 }
-.book-page-eyebrow{max-width:320px;margin-left:auto!important;margin-right:auto!important;line-height:1.35!important}
+.book-page-eyebrow{max-width:340px;margin-left:auto!important;margin-right:auto!important;line-height:1.35!important}
 .book-page-names{font-size:1.7rem!important}
 
 @media(max-width:520px){
@@ -117,7 +156,13 @@
   .aa-countdown-box strong{font-size:1.18rem}
   .aa-countdown-box span{font-size:.52rem;letter-spacing:.08em}
   .aa-dress-grid{grid-template-columns:1fr}
-  .book{height:min(56vh,420px)!important;width:min(90vw,430px)!important}
   .travel-step{font-size:.98rem!important}
   .travel-step .ttl,.travel-step.is-focused .ttl,.travel-step.is-passed .ttl{font-size:1.04rem!important}
+  .book,.intro-scene,.intro-overlay{
+    width:100vw!important;
+    height:100vh!important;
+    height:100svh!important;
+    height:100dvh!important;
+  }
+  .book-cover{background-size:200% 100%!important}
 }
