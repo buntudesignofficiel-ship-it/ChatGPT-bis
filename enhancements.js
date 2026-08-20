@@ -1,208 +1,23 @@
 (function(){
   'use strict';
 
-  var MAIRIE_PHOTO='https://www.communes.com/images/orig/nord-pas-de-calais/nord/croix_59170/croix_319897.jpg';
+  var MAIRIE_PHOTO='https://images.openai.com/static-rsc-4/iZI4Dh1JjI2XmCPJlTQN3M8MTUvhGbBI-vckePZPg5b0wh1uQ9-43Cn4sSDB-fP-rBpCd4oCHy1DQQQaLgpL_40Y4bZwkE_DJ-UTwh7Wqf3mreOyeXoqhUSSgOuCHHbSdCx7_cBxQLOl3_TObWYBmQYLHDBPDTtyDXo5vCnDUsIfvu5kam-rEr8aU-D6xdoC?purpose=fullsize';
   var MAP_MAIRIE='https://www.google.com/maps/search/?api=1&query=Mairie%20de%20Croix%2C%20187%20rue%20Jean%20Jaur%C3%A8s%2C%2059170%20Croix';
   var INTRO_VIDEO='https://www.pexels.com/download/video/6474633/';
 
   function icon(type){
-    var paths={
-      home:'<path d="M5 12l7-6 7 6v8H5z"/><path d="M9 20v-5h6v5"/>',
-      mairie:'<path d="M4 20h16"/><path d="M6 20V9h12v11"/><path d="M8 9V6h8v3"/><path d="M10 6V4h4v2"/><path d="M9 13h2v3H9zM13 13h2v3h-2z"/>',
-      camera:'<path d="M4 8h4l1.5-2h5L16 8h4v11H4z"/><circle cx="12" cy="13.5" r="3.2"/>',
-      toast:'<path d="M7 4h5l-1 7c-.2 1.6-1.2 2.5-2.5 2.5S6.2 12.6 6 11z"/><path d="M9 13.5V20M6.5 20h5"/><path d="M14 5h4l-.7 5c-.2 1.4-1 2.2-2.1 2.2-.8 0-1.4-.4-1.8-1"/><path d="M15.2 12.2V20M13 20h4.5"/>',
-      heart:'<path d="M12 20S4 15.3 4 9.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 8 3.5C20 15.3 12 20 12 20z"/>',
-      suit:'<path d="M8 4l4 3 4-3 2 3v13H6V7z"/><path d="M10 7l2 4 2-4M12 11v9"/>',
-      dress:'<path d="M10 4h4l1 5 4 10H5L9 9z"/><path d="M9 9h6"/>'
-    };
+    var paths={home:'<path d="M5 12l7-6 7 6v8H5z"/><path d="M9 20v-5h6v5"/>',mairie:'<path d="M4 20h16"/><path d="M6 20V9h12v11"/><path d="M8 9V6h8v3"/><path d="M10 6V4h4v2"/><path d="M9 13h2v3H9zM13 13h2v3h-2z"/>',camera:'<path d="M4 8h4l1.5-2h5L16 8h4v11H4z"/><circle cx="12" cy="13.5" r="3.2"/>',toast:'<path d="M7 4h5l-1 7c-.2 1.6-1.2 2.5-2.5 2.5S6.2 12.6 6 11z"/><path d="M9 13.5V20M6.5 20h5"/><path d="M14 5h4l-.7 5c-.2 1.4-1 2.2-2.1 2.2-.8 0-1.4-.4-1.8-1"/><path d="M15.2 12.2V20M13 20h4.5"/>',heart:'<path d="M12 20S4 15.3 4 9.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 8 3.5C20 15.3 12 20 12 20z"/>',suit:'<path d="M8 4l4 3 4-3 2 3v13H6V7z"/><path d="M10 7l2 4 2-4M12 11v9"/>',dress:'<path d="M10 4h4l1 5 4 10H5L9 9z"/><path d="M9 9h6"/>'};
     return '<svg viewBox="0 0 24 24" aria-hidden="true">'+(paths[type]||paths.heart)+'</svg>';
   }
-
-  function installVideoIntro(){
-    if(document.getElementById('aa-video-intro')) return;
-    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    var oldIntro=document.querySelector('.intro-overlay');
-    if(oldIntro) oldIntro.style.setProperty('display','none','important');
-    document.body.classList.remove('intro-lock');
-
-    var wrap=document.createElement('div');
-    wrap.id='aa-video-intro';
-    wrap.setAttribute('aria-label','Ouverture de l’invitation');
-    wrap.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:2147483647;background:#fff;overflow:hidden;opacity:1;transition:opacity .85s ease;';
-
-    var video=document.createElement('video');
-    video.muted=true;
-    video.autoplay=true;
-    video.playsInline=true;
-    video.setAttribute('playsinline','');
-    video.setAttribute('webkit-playsinline','');
-    video.preload='auto';
-    video.src=INTRO_VIDEO;
-    video.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;background:#fff;';
-
-    var white=document.createElement('div');
-    white.style.cssText='position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity 1.2s ease;';
-
-    wrap.appendChild(video);
-    wrap.appendChild(white);
-    document.body.appendChild(wrap);
-
-    var done=false;
-    function finish(){
-      if(done) return;
-      done=true;
-      white.style.opacity='1';
-      setTimeout(function(){
-        wrap.style.opacity='0';
-        document.body.classList.remove('intro-lock');
-        setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); },900);
-      },450);
-    }
-
-    video.addEventListener('timeupdate',function(){
-      var t=video.currentTime||0;
-      if(t>=3.55) white.style.opacity='1';
-      if(t>=4.75) finish();
-    });
-    video.addEventListener('ended',finish);
-    video.addEventListener('error',function(){ setTimeout(finish,250); });
-    wrap.addEventListener('click',finish);
-
-    var p=video.play();
-    if(p && typeof p.catch==='function') p.catch(function(){
-      setTimeout(function(){
-        var retry=video.play();
-        if(retry && typeof retry.catch==='function') retry.catch(function(){ setTimeout(finish,1200); });
-      },180);
-    });
-    setTimeout(finish,8000);
-  }
-
-  function pad2(n){ return n<10 ? '0'+n : String(n); }
-
-  function addCountdown(){
-    var hero=document.querySelector('.hero');
-    if(!hero||hero.querySelector('.aa-countdown')) return;
-    var date=hero.querySelector('.date');
-    if(!date) return;
-    var wrap=document.createElement('div');
-    wrap.className='aa-countdown-wrap';
-    wrap.innerHTML='<div class="aa-countdown">'+
-      '<div class="aa-countdown-box"><strong data-aa-days>0</strong><span>jours</span></div>'+ 
-      '<div class="aa-countdown-box"><strong data-aa-hours>0</strong><span>heures</span></div>'+ 
-      '<div class="aa-countdown-box"><strong data-aa-minutes>0</strong><span>minutes</span></div>'+ 
-      '<div class="aa-countdown-box"><strong data-aa-seconds>0</strong><span>secondes</span></div>'+ 
-      '</div><p class="aa-countdown-caption">Jusqu’au grand jour</p>';
-    if(date.parentNode){ date.parentNode.insertBefore(wrap,date.nextSibling); }
-    var target=new Date('2026-09-26T10:30:00+02:00').getTime();
-    function tick(){
-      if(!document.documentElement.contains(wrap)) return;
-      var delta=Math.max(0,target-Date.now());
-      var d=Math.floor(delta/86400000); delta%=86400000;
-      var h=Math.floor(delta/3600000); delta%=3600000;
-      var m=Math.floor(delta/60000); var s=Math.floor((delta%60000)/1000);
-      var ed=wrap.querySelector('[data-aa-days]');
-      var eh=wrap.querySelector('[data-aa-hours]');
-      var em=wrap.querySelector('[data-aa-minutes]');
-      var es=wrap.querySelector('[data-aa-seconds]');
-      if(ed) ed.textContent=d;
-      if(eh) eh.textContent=pad2(h);
-      if(em) em.textContent=pad2(m);
-      if(es) es.textContent=pad2(s);
-    }
-    tick(); setInterval(tick,1000);
-  }
-
-  function setHtmlIfChanged(el,html){ if(el && el.innerHTML!==html) el.innerHTML=html; }
-  function setTextIfChanged(el,text){ if(el && el.textContent!==text) el.textContent=text; }
-
-  function polishHero(){
-    document.title='Antonio & Axelle — 26.09.2026';
-    setHtmlIfChanged(document.querySelector('.hero .eyebrow'),'Nous avons une belle nouvelle à vous annoncer :<strong>Nous Nous Marrions</strong>');
-    setHtmlIfChanged(document.querySelector('.hero .names'),'<span>Antonio</span><span class="amp">&amp;</span><span>Axelle</span>');
-    setTextIfChanged(document.querySelector('.book-page-eyebrow'),'Nous avons une belle nouvelle à vous annoncer : Nous Nous Marrions');
-    setHtmlIfChanged(document.querySelector('.book-page-names'),'Antonio &amp; Axelle');
-    setTextIfChanged(document.querySelector('.signoff > p'),'Antonio VIEIRA et Axelle MIGUEL');
-  }
-
-  function addEventIcons(){
-    var steps=document.querySelectorAll('.travel-step');
-    if(!steps.length) return;
-    var types=['home','mairie','camera','toast','heart'];
-    var i,step,el;
-    for(i=0;i<steps.length;i++){
-      step=steps[i];
-      if(!step.querySelector('.aa-event-icon')){
-        el=document.createElement('span');
-        el.className='aa-event-icon';
-        el.innerHTML=icon(types[i]||'heart');
-        step.insertBefore(el,step.firstChild);
-      }
-    }
-    var links=document.querySelectorAll('.travel-step .loc-link');
-    for(i=0;i<links.length;i++) links[i].title='Ouvrir ce lieu dans Google Maps';
-  }
-
-  function addMairieSection(){
-    if(document.querySelector('.aa-mairie')) return;
-    var timeline=document.querySelector('.travel-map-timeline');
-    var dress=document.querySelector('.dresscode');
-    if(!timeline||!dress||!dress.parentNode) return;
-    var section=document.createElement('section');
-    section.className='aa-mairie';
-    section.setAttribute('data-reveal','');
-    section.innerHTML='<h2>Mairie de Croix</h2>'+ 
-      '<img class="aa-mairie-photo" src="'+MAIRIE_PHOTO+'" alt="Hôtel de Ville de Croix" loading="lazy">'+
-      '<p>La cérémonie civile aura lieu à la Mairie de Croix, 187 rue Jean Jaurès, 59170 Croix.</p>'+ 
-      '<a class="aa-map-button" href="'+MAP_MAIRIE+'" target="_blank" rel="noopener noreferrer">⌖ Voir sur Maps</a>';
-    dress.parentNode.insertBefore(section,dress);
-  }
-
-  function polishDressCode(){
-    var section=document.querySelector('.dresscode');
-    if(!section||section.querySelector('.aa-dress-grid')) return;
-    var heading=section.querySelector('h2');
-    var grid=document.createElement('div');
-    grid.className='aa-dress-grid';
-    grid.innerHTML='<div class="aa-dress-card"><div class="aa-dress-icon">'+icon('suit')+'</div><strong>Homme</strong><div class="aa-colors"><span class="aa-color aa-color-white" title="Blanc"></span><span class="aa-color aa-color-black" title="Noir"></span></div><p>Blanc et noir</p></div>'+ 
-      '<div class="aa-dress-card"><div class="aa-dress-icon">'+icon('dress')+'</div><strong>Femme</strong><div class="aa-colors"><span class="aa-color aa-color-offwhite" title="Blanc cassé"></span></div><p>Blanc cassé</p></div>';
-    if(heading && heading.parentNode) heading.parentNode.insertBefore(grid,heading.nextSibling);
-    else section.insertBefore(grid,section.firstChild);
-    var paras=section.querySelectorAll('p');
-    var kept=false;
-    for(var i=0;i<paras.length;i++){
-      var p=paras[i];
-      var parent=p.parentNode;
-      var insideCard=false;
-      while(parent && parent!==section){ if(parent.className && String(parent.className).indexOf('aa-dress-card')!==-1){ insideCard=true; break; } parent=parent.parentNode; }
-      if(insideCard) continue;
-      if(!kept){ p.className=(p.className||'')+' aa-dress-copy'; p.textContent='Pour cette journée, nous serions ravis de vous voir dans ces tons.'; kept=true; }
-      else if(p.parentNode) p.parentNode.removeChild(p);
-    }
-  }
-
-  function apply(){
-    if(!document.querySelector('.hero')) return false;
-    polishHero();
-    addCountdown();
-    addEventIcons();
-    addMairieSection();
-    polishDressCode();
-    return true;
-  }
-
-  function boot(){
-    installVideoIntro();
-    var tries=0;
-    function attempt(){
-      tries++;
-      if(apply() || tries>=12) return;
-      setTimeout(attempt,250);
-    }
-    attempt();
-  }
-
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
-  else boot();
+  function installVideoIntro(){if(document.getElementById('aa-video-intro'))return;if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;var oldIntro=document.querySelector('.intro-overlay');if(oldIntro)oldIntro.style.setProperty('display','none','important');document.body.classList.remove('intro-lock');var wrap=document.createElement('div');wrap.id='aa-video-intro';wrap.setAttribute('aria-label','Ouverture de l’invitation');wrap.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:2147483647;background:#fff;overflow:hidden;opacity:1;transition:opacity .85s ease;';var video=document.createElement('video');video.muted=true;video.autoplay=true;video.playsInline=true;video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');video.preload='auto';video.src=INTRO_VIDEO;video.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;background:#fff;';var white=document.createElement('div');white.style.cssText='position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity 1.2s ease;';wrap.appendChild(video);wrap.appendChild(white);document.body.appendChild(wrap);var done=false;function finish(){if(done)return;done=true;white.style.opacity='1';setTimeout(function(){wrap.style.opacity='0';document.body.classList.remove('intro-lock');setTimeout(function(){if(wrap.parentNode)wrap.parentNode.removeChild(wrap);},900);},450);}video.addEventListener('timeupdate',function(){var t=video.currentTime||0;if(t>=3.55)white.style.opacity='1';if(t>=4.75)finish();});video.addEventListener('ended',finish);video.addEventListener('error',function(){setTimeout(finish,250);});wrap.addEventListener('click',finish);var p=video.play();if(p&&typeof p.catch==='function')p.catch(function(){setTimeout(function(){var retry=video.play();if(retry&&typeof retry.catch==='function')retry.catch(function(){setTimeout(finish,1200);});},180);});setTimeout(finish,8000);}
+  function pad2(n){return n<10?'0'+n:String(n);}
+  function addCountdown(){var hero=document.querySelector('.hero');if(!hero||hero.querySelector('.aa-countdown'))return;var date=hero.querySelector('.date');if(!date)return;var wrap=document.createElement('div');wrap.className='aa-countdown-wrap';wrap.innerHTML='<div class="aa-countdown"><div class="aa-countdown-box"><strong data-aa-days>0</strong><span>jours</span></div><div class="aa-countdown-box"><strong data-aa-hours>0</strong><span>heures</span></div><div class="aa-countdown-box"><strong data-aa-minutes>0</strong><span>minutes</span></div><div class="aa-countdown-box"><strong data-aa-seconds>0</strong><span>secondes</span></div></div><p class="aa-countdown-caption">Jusqu’au grand jour</p>';if(date.parentNode)date.parentNode.insertBefore(wrap,date.nextSibling);var target=new Date('2026-09-26T10:30:00+02:00').getTime();function tick(){if(!document.documentElement.contains(wrap))return;var delta=Math.max(0,target-Date.now());var d=Math.floor(delta/86400000);delta%=86400000;var h=Math.floor(delta/3600000);delta%=3600000;var m=Math.floor(delta/60000),s=Math.floor((delta%60000)/1000);wrap.querySelector('[data-aa-days]').textContent=d;wrap.querySelector('[data-aa-hours]').textContent=pad2(h);wrap.querySelector('[data-aa-minutes]').textContent=pad2(m);wrap.querySelector('[data-aa-seconds]').textContent=pad2(s);}tick();setInterval(tick,1000);}
+  function setHtmlIfChanged(el,html){if(el&&el.innerHTML!==html)el.innerHTML=html;}function setTextIfChanged(el,text){if(el&&el.textContent!==text)el.textContent=text;}
+  function polishHero(){document.title='Antonio & Axelle — 26.09.2026';setHtmlIfChanged(document.querySelector('.hero .eyebrow'),'Nous avons une belle nouvelle à vous annoncer :<strong>Nous Nous Marrions</strong>');setHtmlIfChanged(document.querySelector('.hero .names'),'<span>Antonio</span><span class="amp">&amp;</span><span>Axelle</span>');setTextIfChanged(document.querySelector('.book-page-eyebrow'),'Nous avons une belle nouvelle à vous annoncer : Nous Nous Marrions');setHtmlIfChanged(document.querySelector('.book-page-names'),'Antonio &amp; Axelle');setTextIfChanged(document.querySelector('.signoff > p'),'Antonio VIEIRA et Axelle MIGUEL');}
+  function addEventIcons(){var steps=document.querySelectorAll('.travel-step');if(!steps.length)return;var types=['home','mairie','camera','toast','heart'];for(var i=0;i<steps.length;i++){var step=steps[i];if(!step.querySelector('.aa-event-icon')){var el=document.createElement('span');el.className='aa-event-icon';el.innerHTML=icon(types[i]||'heart');step.insertBefore(el,step.firstChild);}}var ceremony=steps[1];if(ceremony){var title=ceremony.querySelector('.ttl');if(title)title.textContent='Cérémonie civile';var mairieLink=ceremony.querySelector('.loc-link');if(mairieLink)mairieLink.remove();}var links=document.querySelectorAll('.travel-step .loc-link');for(var j=0;j<links.length;j++)links[j].title='Ouvrir ce lieu dans Google Maps';}
+  function addMairieSection(){if(document.querySelector('.aa-mairie'))return;var timeline=document.querySelector('.travel-map-timeline');var dress=document.querySelector('.dresscode');if(!timeline||!dress||!dress.parentNode)return;var section=document.createElement('section');section.className='aa-mairie';section.setAttribute('data-reveal','');section.innerHTML='<h2>Mairie de Croix</h2><img class="aa-mairie-photo" src="'+MAIRIE_PHOTO+'" alt="Hôtel de Ville de Croix" loading="lazy"><p>La cérémonie civile aura lieu à la Mairie de Croix, 187 rue Jean Jaurès, 59170 Croix.</p><a class="aa-map-button" href="'+MAP_MAIRIE+'" target="_blank" rel="noopener noreferrer">⌖ Voir sur Maps</a>';dress.parentNode.insertBefore(section,dress);}
+  function polishDressCode(){var section=document.querySelector('.dresscode');if(!section||section.querySelector('.aa-dress-grid'))return;var heading=section.querySelector('h2');var grid=document.createElement('div');grid.className='aa-dress-grid';grid.innerHTML='<div class="aa-dress-card"><div class="aa-dress-icon">'+icon('suit')+'</div><strong>Homme</strong><div class="aa-colors"><span class="aa-color aa-color-white" title="Blanc"></span><span class="aa-color aa-color-black" title="Noir"></span></div><p>Blanc et noir</p></div><div class="aa-dress-card"><div class="aa-dress-icon">'+icon('dress')+'</div><strong>Femme</strong><div class="aa-colors"><span class="aa-color aa-color-offwhite" title="Blanc cassé"></span></div><p>Blanc cassé</p></div>';if(heading&&heading.parentNode)heading.parentNode.insertBefore(grid,heading.nextSibling);else section.insertBefore(grid,section.firstChild);var paras=section.querySelectorAll('p'),kept=false;for(var i=0;i<paras.length;i++){var p=paras[i],parent=p.parentNode,insideCard=false;while(parent&&parent!==section){if(parent.className&&String(parent.className).indexOf('aa-dress-card')!==-1){insideCard=true;break;}parent=parent.parentNode;}if(insideCard)continue;if(!kept){p.className=(p.className||'')+' aa-dress-copy';p.textContent='Pour cette journée, nous serions ravis de vous voir dans ces tons.';kept=true;}else if(p.parentNode)p.parentNode.removeChild(p);}}
+  function apply(){if(!document.querySelector('.hero'))return false;polishHero();addCountdown();addEventIcons();addMairieSection();polishDressCode();return true;}
+  function boot(){installVideoIntro();var tries=0;function attempt(){tries++;if(apply()||tries>=12)return;setTimeout(attempt,250);}attempt();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
