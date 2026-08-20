@@ -68,7 +68,11 @@
       var title=ceremony.querySelector('.ttl');
       if(title)title.textContent='Cérémonie civile';
       var mairieLink=ceremony.querySelector('.loc-link');
-      if(mairieLink)mairieLink.remove();
+      if(mairieLink){
+        mairieLink.href=MAP_MAIRIE;
+        mairieLink.textContent='📍 Mairie de Croix';
+        mairieLink.title='Ouvrir ce lieu dans Google Maps';
+      }
     }
     if(steps[2])steps[2].classList.add('aa-parc-step');
     var links=document.querySelectorAll('.travel-step .loc-link');
@@ -148,7 +152,6 @@
     var nearest=Math.round(exact);
 
     steps.forEach(function(step,index){
-      /* Never replace the step's own transform: it controls the original left/right placement. */
       step.style.removeProperty('transform');
       step.style.removeProperty('opacity');
       var distance=Math.abs(index-exact);
