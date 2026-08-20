@@ -29,7 +29,7 @@
     var wrap=document.createElement('div');
     wrap.id='aa-video-intro';
     wrap.setAttribute('aria-label','Ouverture de l’invitation');
-    wrap.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:2147483647;background:#fff;overflow:hidden;opacity:1;transition:opacity .7s ease;';
+    wrap.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:2147483647;background:#fff;overflow:hidden;opacity:1;transition:opacity .85s ease;';
 
     var video=document.createElement('video');
     video.muted=true;
@@ -42,7 +42,7 @@
     video.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;background:#fff;';
 
     var white=document.createElement('div');
-    white.style.cssText='position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity 1.05s ease;';
+    white.style.cssText='position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity 1.2s ease;';
 
     wrap.appendChild(video);
     wrap.appendChild(white);
@@ -56,14 +56,14 @@
       setTimeout(function(){
         wrap.style.opacity='0';
         document.body.classList.remove('intro-lock');
-        setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); },720);
-      },180);
+        setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); },900);
+      },450);
     }
 
     video.addEventListener('timeupdate',function(){
       var t=video.currentTime||0;
-      if(t>=2.75) white.style.opacity='1';
-      if(t>=3.95) finish();
+      if(t>=3.55) white.style.opacity='1';
+      if(t>=4.75) finish();
     });
     video.addEventListener('ended',finish);
     video.addEventListener('error',function(){ setTimeout(finish,250); });
@@ -73,10 +73,10 @@
     if(p && typeof p.catch==='function') p.catch(function(){
       setTimeout(function(){
         var retry=video.play();
-        if(retry && typeof retry.catch==='function') retry.catch(function(){ setTimeout(finish,700); });
-      },120);
+        if(retry && typeof retry.catch==='function') retry.catch(function(){ setTimeout(finish,1200); });
+      },180);
     });
-    setTimeout(finish,6500);
+    setTimeout(finish,8000);
   }
 
   function pad2(n){ return n<10 ? '0'+n : String(n); }
