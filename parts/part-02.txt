@@ -106,34 +106,3 @@
   .admin-row .delete-response:disabled { opacity: 0.5; cursor: default; }
   .admin-empty { color: #a39c8d; font-style: italic; }
   .error-msg { color: #8a2b2b; font-size: 0.88rem; margin-top: 0.6rem; }
-
-  .intro-overlay {
-    position: fixed; inset: 0; z-index: 9999;
-    background: #171412;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 1; transition: opacity 0.6s ease;
-  }
-  .intro-overlay.is-fading { opacity: 0; }
-  .intro-scene {
-    display: flex; flex-direction: column; align-items: center;
-    cursor: pointer; perspective: 1600px; padding: 1.5rem;
-  }
-  .intro-scene:focus-visible { outline: 1px solid #cfc8b9; outline-offset: 8px; }
-  .book {
-    position: relative;
-    width: min(80vw, 320px);
-    aspect-ratio: 3 / 4;
-    transform-style: preserve-3d;
-    animation: bookPulse 1.4s ease-in-out infinite;
-  }
-  .book.is-open { animation: none; }
-  .book-page {
-    position: absolute; inset: 0;
-    background: #faf8f4; border: 1px solid #d8d2c4; border-radius: 4px;
-    box-shadow: 0 20px 44px rgba(0,0,0,0.45);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: 1.4rem;
-    z-index: 1;
-  }
-  .book-page-eyebrow {
-    te
