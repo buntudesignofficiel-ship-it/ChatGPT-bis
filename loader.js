@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var BUILD = '20260820-005';
+  var BUILD = '20260820-006';
   var loader = document.getElementById('loader');
 
   function setStatus(msg){ if(loader) loader.textContent = msg; }
