@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var BUILD = '20260820-013';
+  var BUILD = '20260820-014';
   var loader = document.getElementById('loader');
 
   function setStatus(msg){ if(loader) loader.textContent = msg; }
@@ -28,7 +28,6 @@
   chain.then(function(){
     var html = parts.join('');
 
-    // The Adobe video is the only intro. Remove all legacy intro remnants before rendering.
     html = html.replace(/(\.error-msg\s*\{[^}]*\})[\s\S]*?(?=\s*\[data-reveal\]\s*\{)/i, '$1\n\n');
     html = html.replace(/<template id="intro-template">[\s\S]*?<\/template>\s*/i, '');
     html = html.replace(/<div id="intro-mount"><\/div>\s*/i, '');
