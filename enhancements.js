@@ -3,6 +3,7 @@
 
   var MAIRIE_PHOTO='https://www.communes.com/images/orig/nord-pas-de-calais/nord/croix_59170/croix_319897.jpg';
   var MAP_MAIRIE='https://www.google.com/maps/search/?api=1&query=Mairie%20de%20Croix%2C%20187%20rue%20Jean%20Jaur%C3%A8s%2C%2059170%20Croix';
+  var INTRO_VIDEO='https://www.pexels.com/download/video/6474633/';
 
   function icon(type){
     var paths={
@@ -15,6 +16,67 @@
       dress:'<path d="M10 4h4l1 5 4 10H5L9 9z"/><path d="M9 9h6"/>'
     };
     return '<svg viewBox="0 0 24 24" aria-hidden="true">'+(paths[type]||paths.heart)+'</svg>';
+  }
+
+  function installVideoIntro(){
+    if(document.getElementById('aa-video-intro')) return;
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var oldIntro=document.querySelector('.intro-overlay');
+    if(oldIntro) oldIntro.style.setProperty('display','none','important');
+    document.body.classList.remove('intro-lock');
+
+    var wrap=document.createElement('div');
+    wrap.id='aa-video-intro';
+    wrap.setAttribute('aria-label','Ouverture de l’invitation');
+    wrap.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:2147483647;background:#fff;overflow:hidden;opacity:1;transition:opacity .7s ease;';
+
+    var video=document.createElement('video');
+    video.muted=true;
+    video.autoplay=true;
+    video.playsInline=true;
+    video.setAttribute('playsinline','');
+    video.setAttribute('webkit-playsinline','');
+    video.preload='auto';
+    video.src=INTRO_VIDEO;
+    video.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;background:#fff;';
+
+    var white=document.createElement('div');
+    white.style.cssText='position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity 1.05s ease;';
+
+    wrap.appendChild(video);
+    wrap.appendChild(white);
+    document.body.appendChild(wrap);
+
+    var done=false;
+    function finish(){
+      if(done) return;
+      done=true;
+      white.style.opacity='1';
+      setTimeout(function(){
+        wrap.style.opacity='0';
+        document.body.classList.remove('intro-lock');
+        setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); },720);
+      },180);
+    }
+
+    video.addEventListener('timeupdate',function(){
+      var t=video.currentTime||0;
+      if(t>=2.75) white.style.opacity='1';
+      if(t>=3.95) finish();
+    });
+    video.addEventListener('ended',finish);
+    video.addEventListener('error',function(){ setTimeout(finish,250); });
+    wrap.addEventListener('click',finish);
+
+    var p=video.play();
+    if(p && typeof p.catch==='function') p.catch(function(){
+      setTimeout(function(){
+        var retry=video.play();
+        if(retry && typeof retry.catch==='function') retry.catch(function(){ setTimeout(finish,700); });
+      },120);
+    });
+    setTimeout(finish,6500);
   }
 
   function pad2(n){ return n<10 ? '0'+n : String(n); }
@@ -131,6 +193,7 @@
   }
 
   function boot(){
+    installVideoIntro();
     var tries=0;
     function attempt(){
       tries++;
