@@ -70,6 +70,7 @@
       var mairieLink=ceremony.querySelector('.loc-link');
       if(mairieLink)mairieLink.remove();
     }
+    if(steps[2])steps[2].classList.add('aa-parc-step');
     var links=document.querySelectorAll('.travel-step .loc-link');
     for(var j=0;j<links.length;j++)links[j].title='Ouvrir ce lieu dans Google Maps';
   }
@@ -83,8 +84,7 @@
     if(old&&old.parentNode)old.parentNode.removeChild(old);
 
     var section=document.createElement('section');
-    section.className='aa-places-carousel';
-    section.setAttribute('data-reveal','');
+    section.className='aa-places-carousel is-visible';
     section.innerHTML='\
       <div class="aa-place-slides">\
         <article class="aa-place-slide is-active" data-aa-slide="0">\
@@ -117,7 +117,6 @@
     var dots=section.querySelectorAll('[data-aa-dot]');
     var current=0;
     var timer=null;
-
     function show(index){
       current=(index+slides.length)%slides.length;
       for(var i=0;i<slides.length;i++)slides[i].classList.toggle('is-active',i===current);
@@ -149,27 +148,28 @@
     var nearest=Math.round(exact);
 
     steps.forEach(function(step,index){
+      /* Never replace the step's own transform: it controls the original left/right placement. */
+      step.style.removeProperty('transform');
+      step.style.removeProperty('opacity');
       var distance=Math.abs(index-exact);
       var influence=Math.max(0,1-distance);
-      var scale=.94+influence*.16;
-      step.style.transform='scale('+scale.toFixed(3)+')';
-      step.style.transformOrigin='left center';
-      step.style.opacity=(.72+influence*.28).toFixed(3);
+      var zoom=.96+influence*.12;
+      var time=step.querySelector('.time');
       var title=step.querySelector('.ttl');
-      if(title){
-        title.style.transform='scale('+(1+influence*.07).toFixed(3)+')';
-        title.style.transformOrigin='left center';
-      }
-      step.classList.toggle('is-focused',index===nearest&&distance<.46);
+      var iconEl=step.querySelector('.aa-event-icon');
+      if(time){time.style.transform='scale('+zoom.toFixed(3)+')';time.style.transformOrigin='left center';}
+      if(title){title.style.transform='scale('+zoom.toFixed(3)+')';title.style.transformOrigin='left center';}
+      if(iconEl){iconEl.style.transform='scale('+(.98+influence*.08).toFixed(3)+')';iconEl.style.transformOrigin='left center';}
+      step.classList.toggle('is-focused',index===nearest&&distance<.34);
     });
 
     var fractions=[0,.25,.5,.75,1];
     for(var i=0;i<waypointEls.length;i++){
       var f=fractions[i]||0;
-      var reached=progress>=f-.008;
-      var current=Math.abs(progress-f)<.035;
-      waypointEls[i].classList.toggle('is-passed',reached&&!current);
+      var current=Math.abs(progress-f)<=.012;
+      var passed=progress>f+.012;
       waypointEls[i].classList.toggle('is-current',current);
+      waypointEls[i].classList.toggle('is-passed',passed);
     }
   }
 
@@ -196,12 +196,7 @@
 
   function apply(){
     if(!document.querySelector('.hero'))return false;
-    polishHero();
-    addCountdown();
-    addEventIcons();
-    addPlacesCarousel();
-    polishDressCode();
-    fixTimelineFocus();
+    polishHero();addCountdown();addEventIcons();addPlacesCarousel();polishDressCode();fixTimelineFocus();
     return true;
   }
 
