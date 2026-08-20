@@ -34,7 +34,11 @@
     var finished=false, sequenceStarted=false;
     function finish(){
       if(finished) return; finished=true;
-      wrap.style.opacity='0'; document.body.classList.remove('intro-lock');
+      /* Dès le début du fondu, l'overlay ne doit plus intercepter le doigt/la molette. */
+      wrap.style.pointerEvents='none';
+      wrap.style.touchAction='none';
+      wrap.style.opacity='0';
+      document.body.classList.remove('intro-lock');
       setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); },950);
     }
     function showAnnouncement(){
