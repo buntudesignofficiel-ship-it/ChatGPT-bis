@@ -25,7 +25,6 @@
   object-fit: cover;
   object-position: center;
   transform-origin: center center;
-  will-change: transform, opacity, filter, clip-path;
   backface-visibility: hidden;
 }
 
@@ -35,11 +34,11 @@
   inset: 8px;
   border: 1px solid rgba(190, 145, 72, 0.78);
   pointer-events: none;
-  z-index: 2;
+  z-index: 4;
 }
 
-/* 1. Élégante — fondu + zoom très doux */
-.hero-showcase[data-variant='elegant'] .hero-showcase__img {
+/* Animations only start after the intro overlay is gone. */
+.hero-showcase[data-variant='elegant'].is-animating .hero-showcase__img {
   animation: heroElegant 3.6s cubic-bezier(.22,.72,.28,1) both;
 }
 @keyframes heroElegant {
@@ -48,11 +47,10 @@
   100% { opacity: 1; transform: scale(1); filter: blur(0); }
 }
 
-/* 2. Cinématique — masque lumineux + léger déplacement */
-.hero-showcase[data-variant='cinematic'] .hero-showcase__img {
+.hero-showcase[data-variant='cinematic'].is-animating .hero-showcase__img {
   animation: heroCinematic 3.8s cubic-bezier(.2,.7,.2,1) both;
 }
-.hero-showcase[data-variant='cinematic']::before {
+.hero-showcase[data-variant='cinematic'].is-animating::before {
   content: '';
   position: absolute;
   z-index: 3;
@@ -76,30 +74,33 @@
   to   { left: 115%; opacity: 0; }
 }
 
-/* 3. Minimaliste — cadre qui se dessine + mise au point */
-.hero-showcase[data-variant='minimal'] .hero-showcase__img {
-  animation: heroMinimal 3.2s ease both;
-}
+/* Minimal: a clearly visible gold rectangle draws itself around the photo. */
 .hero-showcase[data-variant='minimal'] .hero-showcase__frame::after {
-  border-color: transparent;
+  inset: 10px;
+  border: 0;
   background:
-    linear-gradient(#c59a56,#c59a56) left top/0 1px no-repeat,
-    linear-gradient(#c59a56,#c59a56) right top/1px 0 no-repeat,
-    linear-gradient(#c59a56,#c59a56) right bottom/0 1px no-repeat,
-    linear-gradient(#c59a56,#c59a56) left bottom/1px 0 no-repeat;
-  animation: heroFrame 2.5s ease .15s forwards;
+    linear-gradient(#c59a56,#c59a56) left top/0 2px no-repeat,
+    linear-gradient(#c59a56,#c59a56) right top/2px 0 no-repeat,
+    linear-gradient(#c59a56,#c59a56) right bottom/0 2px no-repeat,
+    linear-gradient(#c59a56,#c59a56) left bottom/2px 0 no-repeat;
+}
+.hero-showcase[data-variant='minimal'].is-animating .hero-showcase__img {
+  animation: heroMinimal 3.1s ease both;
+}
+.hero-showcase[data-variant='minimal'].is-animating .hero-showcase__frame::after {
+  animation: heroFrameDraw 3.2s cubic-bezier(.22,.72,.28,1) .2s forwards;
 }
 @keyframes heroMinimal {
-  0%   { opacity: 0; transform: scale(1.02); filter: saturate(.9) blur(2px); }
-  28%  { opacity: 1; }
+  0%   { opacity: .7; transform: scale(1.025); filter: blur(1.5px); }
+  35%  { opacity: 1; filter: blur(0); }
   100% { opacity: 1; transform: scale(1); filter: none; }
 }
-@keyframes heroFrame {
-  0%   { background-size: 0 1px, 1px 0, 0 1px, 1px 0; }
-  25%  { background-size: 100% 1px, 1px 0, 0 1px, 1px 0; }
-  50%  { background-size: 100% 1px, 1px 100%, 0 1px, 1px 0; }
-  75%  { background-size: 100% 1px, 1px 100%, 100% 1px, 1px 0; }
-  100% { background-size: 100% 1px, 1px 100%, 100% 1px, 1px 100%; }
+@keyframes heroFrameDraw {
+  0%   { background-size: 0 2px, 2px 0, 0 2px, 2px 0; }
+  24%  { background-size: 100% 2px, 2px 0, 0 2px, 2px 0; }
+  49%  { background-size: 100% 2px, 2px 100%, 0 2px, 2px 0; }
+  74%  { background-size: 100% 2px, 2px 100%, 100% 2px, 2px 0; }
+  100% { background-size: 100% 2px, 2px 100%, 100% 2px, 2px 100%; }
 }
 
 @media (max-width: 700px) {
@@ -109,16 +110,6 @@
     aspect-ratio: 1200 / 630;
     box-shadow: none;
   }
-  .hero-showcase__frame::after { inset: 5px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-showcase__img,
-  .hero-showcase::before,
-  .hero-showcase__frame::after {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-  }
+  .hero-showcase__frame::after { inset: 6px; }
+  .hero-showcase[data-variant='minimal'] .hero-showcase__frame::after { inset: 7px; }
 }
