@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var BUILD = '20260821-clean1';
+  var BUILD = '20260821-landing1';
   var loader = document.getElementById('loader');
 
   function setStatus(msg){ if(loader) loader.textContent = msg; }
@@ -36,6 +36,7 @@
 
     html = html.replace('</head>',
       '<link rel="stylesheet" href="enhancements.css?v=' + BUILD + '">' +
+      '<link rel="stylesheet" href="landing-photo.css?v=' + BUILD + '">' +
       '</head>');
 
     var bodyEnd = html.lastIndexOf('</body>');
@@ -45,6 +46,7 @@
       '<script src="supabase-rsvp.js?v=' + BUILD + '"></script>' +
       '<script src="admin-delete.js?v=' + BUILD + '"></script>' +
       '<script src="enhancements.js?v=' + BUILD + '"></script>' +
+      '<script src="landing-photo.js?v=' + BUILD + '"></script>' +
       '<script src="intro-video.js?v=' + BUILD + '"></script>';
 
     html = html.slice(0, bodyEnd) + scripts + html.slice(bodyEnd);
