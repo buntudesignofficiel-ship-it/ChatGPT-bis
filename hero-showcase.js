@@ -6,7 +6,36 @@
       var v = new URLSearchParams(window.location.search).get('hero');
       if(v === 'cinematic' || v === 'minimal' || v === 'elegant') return v;
     } catch(e) {}
-    return 'elegant';
+    return 'minimal';
+  }
+
+  function startWhenIntroEnds(section){
+    var started = false;
+    function start(){
+      if(started) return;
+      started = true;
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){ section.classList.add('is-animating'); });
+      });
+    }
+
+    function check(){
+      if(!document.getElementById('aa-video-intro')) start();
+    }
+
+    check();
+    if(started) return;
+
+    var observer = new MutationObserver(function(){
+      if(!document.getElementById('aa-video-intro')){
+        observer.disconnect();
+        setTimeout(start, 120);
+      }
+    });
+    observer.observe(document.body, {childList:true});
+
+    /* Safety fallback if the intro is skipped or altered. */
+    setTimeout(start, 15000);
   }
 
   function mountHero(){
@@ -34,6 +63,8 @@
     frame.appendChild(img);
     section.appendChild(frame);
     existingHero.parentNode.insertBefore(section, existingHero);
+
+    startWhenIntroEnds(section);
   }
 
   if(document.readyState === 'loading') {
