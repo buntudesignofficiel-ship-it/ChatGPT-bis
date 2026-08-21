@@ -16,7 +16,9 @@
   padding:0;
 }
 
-/* Mobile : photo plus haute, sans déformation. On rogne seulement un peu sur les côtés. */
+/* Mobile : photo plus haute, sans déformation.
+   Le cadrage est ancré à gauche pour préserver tout le texte ;
+   le surplus est rogné uniquement sur le côté droit. */
 @media (max-width:700px){
   .aa-landing-photo{
     aspect-ratio:1.55 / 1;
@@ -25,6 +27,6 @@
     width:100%;
     height:100%;
     object-fit:cover;
-    object-position:44% center;
+    object-position:left center;
   }
 }
