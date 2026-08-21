@@ -19,7 +19,9 @@
     total=Number(total)||0;
     if(total>0){
       el.hidden=false;
-      el.textContent='🤍 '+total+' personne'+(total>1?'s ont':' a')+' déjà confirmé sa présence';
+      el.textContent=total===1
+        ? '🤍 1 personne a déjà confirmé sa présence'
+        : '🤍 '+total+' personnes ont déjà confirmé leur présence';
     }else{
       el.hidden=true;
       el.textContent='';
