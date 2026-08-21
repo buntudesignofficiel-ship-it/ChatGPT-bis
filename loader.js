@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var BUILD = '20260821-landing3';
+  var BUILD = '20260821-rsvp-counter1';
   var loader = document.getElementById('loader');
 
   function setStatus(msg){ if(loader) loader.textContent = msg; }
@@ -44,6 +44,7 @@
 
     var scripts =
       '<script src="supabase-rsvp.js?v=' + BUILD + '"></script>' +
+      '<script src="public-rsvp-counter.js?v=' + BUILD + '"></script>' +
       '<script src="admin-delete.js?v=' + BUILD + '"></script>' +
       '<script src="enhancements.js?v=' + BUILD + '"></script>' +
       '<script src="landing-photo.js?v=' + BUILD + '"></script>' +
